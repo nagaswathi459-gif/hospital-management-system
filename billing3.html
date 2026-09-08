@@ -1,0 +1,2064 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Hospital Management System - Billing</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f4f7fc;
+    color:#333;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+    background:#0077b6;
+    color:white;
+    padding:18px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 3px 10px rgba(0,0,0,.2);
+}
+
+.logo{
+    font-size:22px;
+    font-weight:bold;
+}
+
+.title{
+    font-size:20px;
+    font-weight:bold;
+}
+
+.home{
+    background:white;
+    color:#0077b6;
+    border:none;
+    padding:9px 16px;
+    border-radius:5px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+/* ================= MAIN ================= */
+
+.container{
+    max-width:1150px;
+    margin:30px auto;
+    padding:0 15px;
+}
+
+.card{
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    margin-bottom:20px;
+    box-shadow:0 3px 12px rgba(0,0,0,.12);
+}
+
+.card h2{
+    color:#0077b6;
+    margin-top:0;
+    border-bottom:2px solid #e5f2f8;
+    padding-bottom:10px;
+}
+
+/* ================= PATIENT DETAILS ================= */
+
+.patient-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+}
+
+.field label{
+    display:block;
+    font-weight:bold;
+    margin-bottom:7px;
+    color:#444;
+}
+
+input,
+select{
+    width:100%;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:5px;
+    font-size:14px;
+}
+
+input[readonly]{
+    background:#f1f3f5;
+}
+
+/* ================= TABLE ================= */
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:#0077b6;
+    color:white;
+    padding:12px;
+}
+
+td{
+    border:1px solid #ddd;
+    padding:10px;
+    text-align:center;
+}
+
+.rate{
+    background:#f3f3f3;
+}
+
+/* ================= BUTTONS ================= */
+
+.add-btn{
+    margin-top:15px;
+    background:#2a9d8f;
+    color:white;
+    border:none;
+    padding:10px 16px;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.delete-btn{
+    background:#e63946;
+    color:white;
+    border:none;
+    padding:7px 10px;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.action-btn{
+    border:none;
+    color:white;
+    padding:12px 18px;
+    margin:5px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.generate{
+    background:#0077b6;
+}
+
+.print{
+    background:#6a4c93;
+}
+
+.pay{
+    background:#2a9d8f;
+}
+
+.clear{
+    background:#e76f51;
+}
+
+button:hover{
+    opacity:.85;
+}
+
+/* ================= SUMMARY ================= */
+
+.summary{
+    width:350px;
+    margin-left:auto;
+    margin-top:25px;
+}
+
+.summary-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px;
+    border-bottom:1px solid #eee;
+}
+
+.discount{
+    width:120px;
+}
+
+.grand-total{
+    font-size:21px;
+    font-weight:bold;
+    color:#0077b6;
+    border-top:2px solid #0077b6;
+}
+
+/* ================= PAYMENT ================= */
+
+.payment{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.payment label{
+    display:block;
+    font-weight:bold;
+    margin-bottom:7px;
+}
+
+/* ================= MESSAGE ================= */
+
+.message{
+    display:none;
+    text-align:center;
+    background:#d8f3dc;
+    color:#1b4332;
+    padding:12px;
+    margin-top:15px;
+    border-radius:5px;
+    font-weight:bold;
+}
+
+/* ================= PATIENT STATUS ================= */
+
+.status-box{
+    margin-top:20px;
+    padding:15px;
+    background:#eef6fa;
+    border-left:5px solid #0077b6;
+    border-radius:5px;
+}
+
+.status-box strong{
+    color:#0077b6;
+}
+
+/* ================= HISTORY ================= */
+
+.history{
+    margin-top:20px;
+}
+
+.history th{
+    background:#023e8a;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:700px){
+
+    .header{
+        flex-wrap:wrap;
+        gap:10px;
+        padding:15px;
+    }
+
+    .logo{
+        font-size:17px;
+    }
+
+    .title{
+        font-size:16px;
+    }
+
+    .patient-grid,
+    .payment{
+        grid-template-columns:1fr;
+    }
+
+    .summary{
+        width:100%;
+    }
+
+    table{
+        font-size:12px;
+        display:block;
+        overflow-x:auto;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= HEADER ================= -->
+
+<div class="header">
+
+    <div class="logo">
+        🏥 HOSPITAL MANAGEMENT SYSTEM
+    </div>
+
+    <div class="title">
+        💳 BILLING
+    </div>
+
+    <button
+        class="home"
+        onclick="window.location.href='home1.html'">
+
+        🏠 Home
+
+    </button>
+
+</div>
+
+
+<div class="container">
+
+
+<!-- ==================================================
+     PATIENT DETAILS
+================================================== -->
+
+<div class="card">
+
+    <h2>👤 PATIENT BILLING DETAILS</h2>
+
+    <div class="patient-grid">
+
+        <div class="field">
+
+            <label>Select Patient</label>
+
+            <select
+                id="patientSelect"
+                onchange="loadPatient()">
+
+                <option value="">
+                    Select Patient
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>Patient Name</label>
+
+            <input
+                type="text"
+                id="patientName"
+                readonly>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>Phone Number</label>
+
+            <input
+                type="text"
+                id="phone"
+                readonly>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>Disease</label>
+
+            <input
+                type="text"
+                id="disease"
+                readonly>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>Department</label>
+
+            <input
+                type="text"
+                id="department"
+                readonly>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>Doctor</label>
+
+            <input
+                type="text"
+                id="doctor"
+                readonly>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>Appointment Date</label>
+
+            <input
+                type="text"
+                id="appointmentDate"
+                readonly>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>Appointment Time</label>
+
+            <input
+                type="text"
+                id="appointmentTime"
+                readonly>
+
+        </div>
+
+    </div>
+
+
+    <div class="status-box">
+
+        <b>Patient Billing Status:</b>
+
+        <strong id="patientBillingStatus">
+            Please select a patient
+        </strong>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==================================================
+     BILL DETAILS
+================================================== -->
+
+<div class="card">
+
+    <h2>🧾 BILLING DETAILS</h2>
+
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>Service</th>
+                <th>Quantity</th>
+                <th>Rate (₹)</th>
+                <th>Total (₹)</th>
+                <th>Action</th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody id="billTable"></tbody>
+
+    </table>
+
+
+    <button
+        type="button"
+        class="add-btn"
+        onclick="addService()">
+
+        ➕ Add Service
+
+    </button>
+
+
+    <!-- SUMMARY -->
+
+    <div class="summary">
+
+        <div class="summary-row">
+
+            <span>Subtotal:</span>
+
+            <strong>
+                ₹<span id="subtotal">0.00</span>
+            </strong>
+
+        </div>
+
+
+        <div class="summary-row">
+
+            <span>Discount:</span>
+
+            <input
+                class="discount"
+                type="number"
+                id="discount"
+                value="0"
+                min="0"
+                oninput="calculateBill()">
+
+        </div>
+
+
+        <div class="summary-row grand-total">
+
+            <span>TOTAL:</span>
+
+            <span>
+                ₹<span id="grandTotal">0.00</span>
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==================================================
+     PAYMENT
+================================================== -->
+
+<div class="card">
+
+    <h2>💳 PAYMENT DETAILS</h2>
+
+
+    <div class="payment">
+
+        <div>
+
+            <label>Payment Method</label>
+
+            <select id="paymentMethod">
+
+                <option>Cash</option>
+                <option>UPI</option>
+                <option>Debit Card</option>
+                <option>Credit Card</option>
+                <option>Insurance</option>
+
+            </select>
+
+        </div>
+
+
+        <div>
+
+            <label>Payment Status</label>
+
+            <select id="paymentStatus">
+
+                <option>Paid</option>
+                <option>Pending</option>
+                <option>Partially Paid</option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+
+    <div style="text-align:center;margin-top:20px;">
+
+        <button
+            class="action-btn generate"
+            onclick="generateBill()">
+
+            🧾 Generate Bill
+
+        </button>
+
+
+        <button
+            class="action-btn print"
+            onclick="printBill()">
+
+            🖨️ Print Bill
+
+        </button>
+
+
+        <button
+            class="action-btn pay"
+            onclick="payment()">
+
+            💳 Mark Payment
+
+        </button>
+
+
+        <button
+            class="action-btn clear"
+            onclick="clearBill()">
+
+            🔄 Clear
+
+        </button>
+
+    </div>
+
+
+    <div
+        class="message"
+        id="message">
+
+    </div>
+
+</div>
+
+
+
+<!-- ==================================================
+     BILL HISTORY
+================================================== -->
+
+<div class="card">
+
+    <h2>📋 BILL HISTORY</h2>
+
+
+    <table class="history">
+
+        <thead>
+
+            <tr>
+
+                <th>Bill No.</th>
+                <th>Patient</th>
+                <th>Disease</th>
+                <th>Doctor</th>
+                <th>Amount</th>
+                <th>Payment</th>
+                <th>Date</th>
+                <th>Action</th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody id="history"></tbody>
+
+    </table>
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+/* ==================================================
+   SAME DATA USED IN APPOINTMENT PAGE
+================================================== */
+
+const doctorData = [
+
+    ["Heart Problem","Cardiology","Dr. John Smith","09:00 AM - 05:00 PM"],
+["Heart Problem","Cardiology","Dr. Emily Brown","01:00 PM - 04:00 PM"],
+
+    ["Brain Problem","Neurology","Dr. David Wilson","09:00 AM - 05:00 PM"],
+
+    ["Bone Problem","Orthopedic","Dr. Rahul Kumar","09:00 AM - 12:00 PM"],
+
+    ["Skin Problem","Dermatology","Dr. Vivek Reddy","09:00 AM - 12:00 PM"],
+
+    ["General Problem","General Medicine","Dr. Suresh Babu","08:00 AM - 03:00 PM"],
+
+    ["Women Problem","Gynecology","Dr. Anjali Sharma","09:00 AM - 01:00 PM"],
+
+    ["Child Problems","Pediatrics","Dr. Priya Rao","11:00 AM - 06:00 PM"],
+
+    ["Ear Nose Throat Problem","ENT","Dr. Ramesh Kumar","09:30 AM - 01:30 PM"],
+
+    ["Eye Problem","Ophthalmology","Dr. Kiran Patel","10:00 AM - 05:00 PM"],
+
+    ["Mental Health Problem","Psychiatry","Dr. Naveen Reddy","02:00 PM - 07:00 PM"],
+
+    ["Dental Problem","Dentistry","Dr. Sneha Gupta","09:00 AM - 04:00 PM"],
+
+    ["Urine Problem","Urology","Dr. Mohan Krishna","08:00 AM - 01:00 PM"],
+
+    ["Kidney Problem","Nephrology","Dr. Lakshmi Devi","12:00 PM - 06:00 PM"],
+
+    ["Lung Problem","Pulmonology","Dr. Arjun Varma","09:00 AM - 03:00 PM"],
+
+    ["Cancer Problem","Oncology","Dr. Keerthi Rao","11:00 AM - 05:00 PM"],
+
+    ["Scan Problem","Radiology","Dr. Harish Kumar","09:00 AM - 02:00 PM"],
+
+    ["Exercise Problem","Physiotherapy","Dr. Swathi Reddy","08:30 AM - 04:30 PM"],
+
+    ["Stomach Problem","Gastroenterology","Dr. Prakash Singh","10:30 AM - 05:30 PM"],
+
+    ["Hormone Problem","Endocrinology","Dr. Meena Joseph","09:00 AM - 01:00 PM"],
+
+    ["Blood Problem","Blood Department","Dr. Arun Kumar","10:00 AM - 04:00 PM"]
+
+];
+
+
+/* ==================================================
+   SERVICE PRICE LIST
+================================================== */
+
+const services = {
+
+    "Consultation":500,
+
+    "Scanning":1200,
+
+    "Blood Test":300,
+
+    "X-Ray":800,
+
+    "Room Charge":2000,
+
+    "Medicine":400,
+
+    "Physiotherapy":600,
+
+    "Dental Treatment":700,
+
+    "Eye Checkup":500,
+
+    "Cancer Consultation":1500,
+
+    "ENT Consultation":600,
+
+    "Skin Treatment":600
+
+};
+
+
+/* ==================================================
+   DISEASE BASED SERVICE
+================================================== */
+
+const diseaseServices = {
+
+    "Heart Problem":["Consultation","Blood Test"],
+
+    "Brain Problem":["Consultation","Scanning"],
+
+    "Bone Problem":["Consultation","X-Ray"],
+
+    "Skin Problem":["Consultation","Skin Treatment"],
+
+    "General Problem":["Consultation","Blood Test"],
+
+    "Women Problem":["Consultation"],
+
+    "Child Problems":["Consultation"],
+
+    "Ear Nose Throat Problem":["ENT Consultation"],
+
+    "Eye Problem":["Eye Checkup"],
+
+    "Mental Health Problem":["Consultation"],
+
+    "Dental Problem":["Dental Treatment"],
+
+    "Urine Problem":["Consultation","Blood Test"],
+
+    "Kidney Problem":["Consultation","Blood Test","Scanning"],
+
+    "Lung Problem":["Consultation","X-Ray"],
+
+    "Cancer Problem":["Cancer Consultation","Scanning"],
+
+    "Scan Problem":["Scanning"],
+
+    "Exercise Problem":["Physiotherapy"],
+
+    "Stomach Problem":["Consultation","Blood Test"],
+
+    "Hormone Problem":["Consultation","Blood Test"],
+
+    "Blood Problem":["Consultation","Blood Test"]
+
+};
+
+
+/* ==================================================
+   LOAD PATIENTS FROM APPOINTMENT PAGE
+================================================== */
+
+let patients =
+    JSON.parse(
+        localStorage.getItem("appointments")
+    ) || [];
+
+
+/* ==================================================
+   LOAD BILL HISTORY
+================================================== */
+
+let bills =
+    JSON.parse(
+        localStorage.getItem("hospitalBilling")
+    ) || [];
+
+
+let billNumber =
+    Number(
+        localStorage.getItem("hospitalBillNumber")
+    ) || 1000;
+
+
+/* ==================================================
+   LOAD PATIENT DROPDOWN
+================================================== */
+
+function loadPatients(){
+
+    const select =
+        document.getElementById("patientSelect");
+
+    select.innerHTML =
+        `<option value="">Select Patient</option>`;
+
+
+    patients.forEach((patient,index)=>{
+
+        select.innerHTML += `
+
+            <option value="${index}">
+
+                ${patient.name} - ${patient.disease}
+
+            </option>
+
+        `;
+
+    });
+
+}
+
+
+/* ==================================================
+   LOAD SELECTED PATIENT
+================================================== */
+
+function loadPatient(){
+
+    const index =
+        document.getElementById(
+            "patientSelect"
+        ).value;
+
+
+    if(index === ""){
+
+        clearPatientDetails();
+
+        return;
+
+    }
+
+
+    const patient =
+        patients[index];
+
+
+    document.getElementById(
+        "patientName"
+    ).value = patient.name;
+
+
+    document.getElementById(
+        "phone"
+    ).value = patient.phone;
+
+
+    document.getElementById(
+        "disease"
+    ).value = patient.disease;
+
+
+    document.getElementById(
+        "department"
+    ).value = patient.department;
+
+
+    document.getElementById(
+        "doctor"
+    ).value = patient.doctor;
+
+
+    document.getElementById(
+        "appointmentDate"
+    ).value = patient.date;
+
+
+    document.getElementById(
+        "appointmentTime"
+    ).value = patient.appointmentTime;
+
+
+    document.getElementById(
+        "patientBillingStatus"
+    ).innerText =
+        "Patient selected - Billing can be prepared";
+
+
+    /* Automatically load disease based services */
+
+    loadDiseaseServices(
+        patient.disease
+    );
+
+}
+
+
+/* ==================================================
+   CLEAR PATIENT DETAILS
+================================================== */
+
+function clearPatientDetails(){
+
+    document.getElementById("patientName").value="";
+    document.getElementById("phone").value="";
+    document.getElementById("disease").value="";
+    document.getElementById("department").value="";
+    document.getElementById("doctor").value="";
+    document.getElementById("appointmentDate").value="";
+    document.getElementById("appointmentTime").value="";
+
+    document.getElementById(
+        "patientBillingStatus"
+    ).innerText =
+        "Please select a patient";
+
+}
+
+
+/* ==================================================
+   LOAD DISEASE BASED SERVICES
+================================================== */
+
+function loadDiseaseServices(disease){
+
+    const table =
+        document.getElementById(
+            "billTable"
+        );
+
+
+    table.innerHTML="";
+
+
+    const selectedServices =
+        diseaseServices[disease] ||
+        ["Consultation"];
+
+
+    selectedServices.forEach(service=>{
+
+        addService(service);
+
+    });
+
+
+    calculateBill();
+
+}
+
+
+/* ==================================================
+   ADD SERVICE
+================================================== */
+
+function addService(selectedService=""){
+
+    const table =
+        document.getElementById(
+            "billTable"
+        );
+
+
+    const row =
+        document.createElement("tr");
+
+
+    row.innerHTML = `
+
+        <td>
+
+            <select
+                class="service"
+                onchange="setRate(this)">
+
+                <option value="">
+                    Select Service
+                </option>
+
+                ${Object.keys(services).map(service => `
+
+                    <option
+                        value="${service}"
+                        ${service === selectedService ? "selected" : ""}>
+
+                        ${service}
+
+                    </option>
+
+                `).join("")}
+
+            </select>
+
+        </td>
+
+
+        <td>
+
+            <input
+                type="number"
+                class="quantity"
+                value="1"
+                min="1"
+                oninput="calculateBill()">
+
+        </td>
+
+
+        <td>
+
+            <input
+                type="number"
+                class="rate"
+                value="${services[selectedService] || 0}"
+                readonly>
+
+        </td>
+
+
+        <td>
+
+            ₹<span class="rowTotal">0.00</span>
+
+        </td>
+
+
+        <td>
+
+            <button
+                type="button"
+                class="delete-btn"
+                onclick="removeService(this)">
+
+                ❌
+
+            </button>
+
+        </td>
+
+    `;
+
+
+    table.appendChild(row);
+
+
+    calculateBill();
+
+}
+
+
+/* ==================================================
+   SET RATE
+================================================== */
+
+function setRate(select){
+
+    const row =
+        select.closest("tr");
+
+
+    const service =
+        select.value;
+
+
+    row.querySelector(".rate").value =
+        services[service] || 0;
+
+
+    calculateBill();
+
+}
+
+
+/* ==================================================
+   CALCULATE BILL
+================================================== */
+
+function calculateBill(){
+
+    const rows =
+        document.querySelectorAll(
+            "#billTable tr"
+        );
+
+
+    let subtotal = 0;
+
+
+    rows.forEach(row=>{
+
+        const quantity =
+            Number(
+                row.querySelector(
+                    ".quantity"
+                ).value
+            ) || 0;
+
+
+        const rate =
+            Number(
+                row.querySelector(
+                    ".rate"
+                ).value
+            ) || 0;
+
+
+        const total =
+            quantity * rate;
+
+
+        row.querySelector(
+            ".rowTotal"
+        ).innerText =
+            total.toFixed(2);
+
+
+        subtotal += total;
+
+    });
+
+
+    const discount =
+        Number(
+            document.getElementById(
+                "discount"
+            ).value
+        ) || 0;
+
+
+    const grandTotal =
+        Math.max(
+            0,
+            subtotal - discount
+        );
+
+
+    document.getElementById(
+        "subtotal"
+    ).innerText =
+        subtotal.toFixed(2);
+
+
+    document.getElementById(
+        "grandTotal"
+    ).innerText =
+        grandTotal.toFixed(2);
+
+}
+
+
+/* ==================================================
+   REMOVE SERVICE
+================================================== */
+
+function removeService(button){
+
+    const rows =
+        document.querySelectorAll(
+            "#billTable tr"
+        );
+
+
+    if(rows.length <= 1){
+
+        alert(
+            "At least one service is required."
+        );
+
+        return;
+
+    }
+
+
+    button
+        .closest("tr")
+        .remove();
+
+
+    calculateBill();
+
+}
+
+
+/* ==================================================
+   GET BILL DATA
+================================================== */
+
+function getBillData(){
+
+    calculateBill();
+
+
+    const patientIndex =
+        document.getElementById(
+            "patientSelect"
+        ).value;
+
+
+    if(patientIndex === ""){
+
+        alert(
+            "Please select a patient first."
+        );
+
+        return null;
+
+    }
+
+
+    const patient =
+        patients[patientIndex];
+
+
+    const rows =
+        document.querySelectorAll(
+            "#billTable tr"
+        );
+
+
+    const items=[];
+
+
+    rows.forEach(row=>{
+
+        const service =
+            row.querySelector(
+                ".service"
+            ).value;
+
+
+        const quantity =
+            Number(
+                row.querySelector(
+                    ".quantity"
+                ).value
+            ) || 0;
+
+
+        const rate =
+            Number(
+                row.querySelector(
+                    ".rate"
+                ).value
+            ) || 0;
+
+
+        if(service !== ""){
+
+            items.push({
+
+                service:service,
+
+                quantity:quantity,
+
+                rate:rate,
+
+                total:
+                    quantity * rate
+
+            });
+
+        }
+
+    });
+
+
+    return {
+
+        billNo:
+            "BILL-" + billNumber,
+
+        patientName:
+            patient.name,
+
+        phone:
+            patient.phone,
+
+        disease:
+            patient.disease,
+
+        department:
+            patient.department,
+
+        doctor:
+            patient.doctor,
+
+        appointmentDate:
+            patient.date,
+
+        appointmentTime:
+            patient.appointmentTime,
+
+        items:items,
+
+        subtotal:
+            Number(
+                document.getElementById(
+                    "subtotal"
+                ).innerText
+            ),
+
+        discount:
+            Number(
+                document.getElementById(
+                    "discount"
+                ).value
+            ) || 0,
+
+        total:
+            Number(
+                document.getElementById(
+                    "grandTotal"
+                ).innerText
+            ),
+
+        payment:
+            document.getElementById(
+                "paymentMethod"
+            ).value,
+
+        status:
+            document.getElementById(
+                "paymentStatus"
+            ).value,
+
+        date:
+            new Date().toLocaleDateString()
+
+    };
+
+}
+
+
+/* ==================================================
+   GENERATE BILL
+================================================== */
+
+function generateBill(){
+
+    const bill =
+        getBillData();
+
+
+    if(!bill){
+        return;
+    }
+
+
+    if(bill.items.length === 0){
+
+        alert(
+            "Please select at least one service."
+        );
+
+        return;
+
+    }
+
+
+    bills.push(bill);
+
+
+    localStorage.setItem(
+        "hospitalBilling",
+        JSON.stringify(bills)
+    );
+
+
+    billNumber++;
+
+
+    localStorage.setItem(
+        "hospitalBillNumber",
+        billNumber
+    );
+
+
+    showMessage(
+        "✅ " +
+        bill.billNo +
+        " generated successfully"
+    );
+
+
+    showHistory();
+
+}
+
+
+/* ==================================================
+   PAYMENT
+================================================== */
+
+function payment(){
+
+    const total =
+        Number(
+            document.getElementById(
+                "grandTotal"
+            ).innerText
+        );
+
+
+    if(total <= 0){
+
+        alert(
+            "Please select a patient and service first."
+        );
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "paymentStatus"
+    ).value =
+        "Paid";
+
+
+    showMessage(
+        "💳 Payment marked as Paid"
+    );
+
+}
+
+
+/* ==================================================
+   PRINT BILL
+================================================== */
+
+function printBill(){
+
+    const bill =
+        getBillData();
+
+
+    if(!bill){
+        return;
+    }
+
+
+    if(bill.items.length === 0){
+
+        alert(
+            "Please select at least one service."
+        );
+
+        return;
+
+    }
+
+
+    const invoice = `
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>${bill.billNo}</title>
+
+<style>
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f6f8;
+    padding:30px;
+    color:#333;
+}
+
+.invoice{
+    max-width:850px;
+    margin:auto;
+    background:white;
+    padding:35px;
+    box-shadow:0 0 10px #ccc;
+}
+
+h1{
+    text-align:center;
+    color:#0077b6;
+}
+
+.hospital-info{
+    text-align:center;
+    color:#666;
+}
+
+h2{
+    text-align:center;
+}
+
+.patient-details{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    border:1px solid #ddd;
+    padding:15px;
+    margin:20px 0;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+th{
+    background:#0077b6;
+    color:white;
+    padding:12px;
+}
+
+td{
+    border:1px solid #ccc;
+    padding:10px;
+    text-align:center;
+}
+
+.summary{
+    width:300px;
+    margin-left:auto;
+    margin-top:25px;
+}
+
+.summary p{
+    display:flex;
+    justify-content:space-between;
+}
+
+.total{
+    border-top:2px solid #0077b6;
+    padding-top:10px;
+    font-size:20px;
+    color:#0077b6;
+    font-weight:bold;
+}
+
+.payment{
+    margin-top:25px;
+    background:#eef6fa;
+    padding:15px;
+}
+
+.footer{
+    text-align:center;
+    margin-top:30px;
+    color:#777;
+}
+
+.buttons{
+    text-align:center;
+    margin-top:25px;
+}
+
+button{
+    background:#0077b6;
+    color:white;
+    border:none;
+    padding:10px 20px;
+    margin:5px;
+    border-radius:5px;
+}
+
+@media print{
+
+    body{
+        background:white;
+        padding:0;
+    }
+
+    .invoice{
+        box-shadow:none;
+    }
+
+    .buttons{
+        display:none;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="invoice">
+
+<h1>
+🏥 HOSPITAL MANAGEMENT SYSTEM
+</h1>
+
+<div class="hospital-info">
+Hospital Billing Department
+</div>
+
+<h2>
+🧾 HOSPITAL BILL
+</h2>
+
+
+<div class="patient-details">
+
+<div>
+<b>Bill No:</b>
+${bill.billNo}
+</div>
+
+<div>
+<b>Date:</b>
+${bill.date}
+</div>
+
+<div>
+<b>Patient Name:</b>
+${bill.patientName}
+</div>
+
+<div>
+<b>Phone:</b>
+${bill.phone}
+</div>
+
+<div>
+<b>Disease:</b>
+${bill.disease}
+</div>
+
+<div>
+<b>Department:</b>
+${bill.department}
+</div>
+
+<div>
+<b>Doctor:</b>
+${bill.doctor}
+</div>
+
+<div>
+<b>Appointment Date:</b>
+${bill.appointmentDate}
+</div>
+
+</div>
+
+
+<table>
+
+<tr>
+
+<th>Service</th>
+<th>Quantity</th>
+<th>Rate</th>
+<th>Total</th>
+
+</tr>
+
+
+${
+    bill.items.map(item=>`
+
+<tr>
+
+<td>${item.service}</td>
+
+<td>${item.quantity}</td>
+
+<td>₹${item.rate.toFixed(2)}</td>
+
+<td>₹${item.total.toFixed(2)}</td>
+
+</tr>
+
+`).join("")
+}
+
+
+</table>
+
+
+<div class="summary">
+
+<p>
+
+<span>Subtotal:</span>
+
+<b>
+₹${bill.subtotal.toFixed(2)}
+</b>
+
+</p>
+
+
+<p>
+
+<span>Discount:</span>
+
+<b>
+₹${bill.discount.toFixed(2)}
+</b>
+
+</p>
+
+
+<p class="total">
+
+<span>TOTAL:</span>
+
+<span>
+₹${bill.total.toFixed(2)}
+</span>
+
+</p>
+
+</div>
+
+
+<div class="payment">
+
+<p>
+<b>Payment Method:</b>
+${bill.payment}
+</p>
+
+<p>
+<b>Payment Status:</b>
+${bill.status}
+</p>
+
+</div>
+
+
+<div class="buttons">
+
+<button onclick="window.print()">
+🖨️ Print Bill
+</button>
+
+<button onclick="window.close()">
+← Close
+</button>
+
+</div>
+
+
+<div class="footer">
+
+Thank you for choosing
+<b>Hospital Management System</b>
+
+</div>
+
+
+</div>
+
+</body>
+
+</html>
+
+`;
+
+
+    const printWindow =
+        window.open(
+            "",
+            "_blank"
+        );
+
+
+    if(!printWindow){
+
+        alert(
+            "Please allow pop-ups for this website."
+        );
+
+        return;
+
+    }
+
+
+    printWindow.document.open();
+
+    printWindow.document.write(
+        invoice
+    );
+
+    printWindow.document.close();
+
+}
+
+
+/* ==================================================
+   CLEAR BILL
+================================================== */
+
+function clearBill(){
+
+    if(
+        !confirm(
+            "Clear the current billing details?"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "patientSelect"
+    ).value="";
+
+
+    clearPatientDetails();
+
+
+    document.getElementById(
+        "discount"
+    ).value=0;
+
+
+    document.getElementById(
+        "paymentMethod"
+    ).value="Cash";
+
+
+    document.getElementById(
+        "paymentStatus"
+    ).value="Paid";
+
+
+    document.getElementById(
+        "billTable"
+    ).innerHTML="";
+
+
+    addService();
+
+
+    calculateBill();
+
+}
+
+
+/* ==================================================
+   MESSAGE
+================================================== */
+
+function showMessage(text){
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    message.innerText=text;
+
+    message.style.display="block";
+
+
+    setTimeout(()=>{
+
+        message.style.display="none";
+
+    },3000);
+
+}
+
+
+/* ==================================================
+   BILL HISTORY
+================================================== */
+
+function showHistory(){
+
+    const history =
+        document.getElementById(
+            "history"
+        );
+
+
+    history.innerHTML="";
+
+
+    if(bills.length===0){
+
+        history.innerHTML=`
+
+        <tr>
+
+            <td colspan="8">
+                No bills generated yet.
+            </td>
+
+        </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    bills.forEach((bill,index)=>{
+
+        history.innerHTML += `
+
+        <tr>
+
+            <td>
+                ${bill.billNo}
+            </td>
+
+            <td>
+                ${bill.patientName}
+            </td>
+
+            <td>
+                ${bill.disease}
+            </td>
+
+            <td>
+                ${bill.doctor}
+            </td>
+
+            <td>
+                ₹${Number(bill.total).toFixed(2)}
+            </td>
+
+            <td>
+                ${bill.status}
+            </td>
+
+            <td>
+                ${bill.date}
+            </td>
+
+            <td>
+
+                <button
+                    class="delete-btn"
+                    onclick="deleteBill(${index})">
+
+                    Delete
+
+                </button>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+}
+
+
+/* ==================================================
+   DELETE BILL
+================================================== */
+
+function deleteBill(index){
+
+    if(
+        confirm(
+            "Delete this bill?"
+        )
+    ){
+
+        bills.splice(
+            index,
+            1
+        );
+
+
+        localStorage.setItem(
+            "hospitalBilling",
+            JSON.stringify(bills)
+        );
+
+
+        showHistory();
+
+    }
+
+}
+
+
+/* ==================================================
+   PAGE LOAD
+================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        loadPatients();
+
+        addService();
+
+        calculateBill();
+
+        showHistory();
+
+    }
+);
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patients List</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f7fc;
+    margin:20px;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px gray;
+}
+
+h2{
+    text-align:center;
+    color:#0d6efd;
+}
+
+button{
+    padding:10px 15px;
+    background:#0077b6;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    margin:5px;
+}
+
+button:hover{
+    background:#023e8a;
+}
+
+input{
+    width:300px;
+    padding:10px;
+    margin:10px 0;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+th{
+    background:#0d6efd;
+    color:white;
+    padding:10px;
+}
+
+td{
+    border:1px solid #ddd;
+    padding:10px;
+    text-align:center;
+}
+
+#count{
+    font-weight:bold;
+    color:#0d6efd;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<button onclick="window.location.href='home1.html'">🏠 Home</button>
+
+<h2>👨‍⚕️ Patient Management</h2>
+
+<input type="text" id="search" placeholder="Search Patient Name" onkeyup="searchPatient()">
+
+<h3 id="count"></h3>
+
+<table>
+
+<thead>
+
+<tr>
+<th>S.No</th>
+<th>Patient Name</th>
+<th>Phone</th>
+<th>Disease</th>
+<th>Department</th>
+<th>Doctor</th>
+<th>Doctor Time</th>
+<th>Appointment Time</th>
+<th>Date</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+</thead>
+
+<tbody id="patientTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+<script>
+
+let patients = JSON.parse(localStorage.getItem("appointments")) || [];
+function loadPatients(){
+
+    let tbody=document.getElementById("patientTable");
+
+    tbody.innerHTML="";
+
+    let today = new Date();
+
+    patients.forEach((p,index)=>{
+
+        let appointmentDate = new Date(
+            p.date + " " + p.appointmentTime
+        );
+
+        if(appointmentDate < today){
+            p.status="Completed";
+        }
+        else{
+            p.status="Booked";
+        }
+
+
+        tbody.innerHTML += `
+        <tr>
+
+        <td>${index+1}</td>
+        <td>${p.name}</td>
+        <td>${p.phone}</td>
+        <td>${p.disease}</td>
+        <td>${p.department}</td>
+        <td>${p.doctor}</td>
+        <td>${p.doctorTime}</td>
+        <td>${p.appointmentTime}</td>
+        <td>${p.date}</td>
+        <td>${p.status}</td>
+
+        <td>
+        <button onclick="deletePatient(${index})">
+        Delete
+        </button>
+        </td>
+
+        </tr>
+        `;
+
+    });
+
+
+    localStorage.setItem(
+        "appointments",
+        JSON.stringify(patients)
+    );
+
+    countPatients();
+
+}
+
+function deletePatient(index){
+
+if(confirm("Delete this patient?")){
+
+patients.splice(index,1);
+
+localStorage.setItem(
+"appointments",
+JSON.stringify(patients)
+);
+
+loadPatients();
+
+}
+
+}
+
+function countPatients(){
+
+document.getElementById("count").innerHTML =
+"Total Patients : " + patients.length;
+
+}
+
+function searchPatient(){
+
+let value=document.getElementById("search").value.toLowerCase();
+
+let rows=document.querySelectorAll("#patientTable tr");
+
+rows.forEach(row=>{
+
+let name=row.cells[1].innerText.toLowerCase();
+
+if(name.includes(value)){
+
+row.style.display="";
+
+}else{
+
+row.style.display="none";
+
+}
+
+});
+
+}
+
+loadPatients();
+
+</script>
+
+</body>
+</html>

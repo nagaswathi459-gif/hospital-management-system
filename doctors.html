@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Doctors List</title>
+
+<style>
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f7fc;
+    margin:20px;
+}
+
+h1{
+    text-align:center;
+    color:#0d6efd;
+}
+
+button{
+    padding:10px 15px;
+    background:#0077b6;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    margin-bottom:15px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+}
+
+th{
+    background:#0d6efd;
+    color:white;
+    padding:12px;
+}
+
+td{
+    padding:10px;
+    border:1px solid #ddd;
+    text-align:center;
+}
+
+.available{
+    color:green;
+    font-weight:bold;
+}
+
+.notavailable{
+    color:red;
+    font-weight:bold;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<button onclick="window.location.href='home1.html'">
+🏠 Home
+</button>
+
+
+<h1>👨‍⚕️ Doctors List
+</h1>
+
+
+<table>
+
+<thead>
+
+<tr>
+<th>S.No</th>
+<th>Doctor Name</th>
+<th>Department</th>
+<th>Phone</th>
+<th>Available Time</th>
+<th>Status</th>
+</tr>
+
+</thead>
+
+
+<tbody id="doctorTable">
+
+</tbody>
+
+
+</table>
+
+
+
+<script>
+
+
+const doctors=[
+
+
+{
+name:"Dr. John Smith",
+department:"Cardiology",
+phone:"9876543210",
+start:"09:00 AM",
+end:"05:00 PM"
+},
+
+
+{
+name:"Dr. Emily Brown",
+department:"Cardiology",
+phone:"9876543211",
+start:"01:00 PM",
+end:"04:00 PM"
+},
+
+
+{
+name:"Dr. David Wilson",
+department:"Neurology",
+phone:"9876512345",
+start:"9:00 AM",
+end:"05:00 PM"
+},
+
+
+{
+name:"Dr. Rahul Kumar",
+department:"Orthopedic",
+phone:"9876534567",
+start:"09:00 AM",
+end:"12:00 PM"
+},
+
+
+{
+name:"Dr. Vivek Reddy",
+department:"Dermatology",
+phone:"9876556789",
+start:"09:00 AM",
+end:"12:00 PM"
+},
+
+
+{
+name:"Dr. Suresh Babu",
+department:"General Medicine",
+phone:"9876590123",
+start:"08:00 AM",
+end:"03:00 PM"
+},
+
+
+{
+name:"Dr. Anjali Sharma",
+department:"Gynecology",
+phone:"9876501111",
+start:"09:00 AM",
+end:"01:00 PM"
+},
+
+
+{
+name:"Dr. Priya Rao",
+department:"Pediatrics",
+phone:"9876502222",
+start:"11:00 AM",
+end:"06:00 PM"
+},
+
+
+{
+name:"Dr. Ramesh Kumar",
+department:"ENT",
+phone:"9876503333",
+start:"09:30 AM",
+end:"01:30 PM"
+},
+
+
+{
+name:"Dr. Kiran Patel",
+department:"Ophthalmology",
+phone:"9876504444",
+start:"10:00 AM",
+end:"05:00 PM"
+},
+
+
+{
+name:"Dr. Naveen Reddy",
+department:"Psychiatry",
+phone:"9876505555",
+start:"02:00 PM",
+end:"07:00 PM"
+},
+
+
+{
+name:"Dr. Sneha Gupta",
+department:"Dentistry",
+phone:"9876506666",
+start:"09:00 AM",
+end:"04:00 PM"
+},
+
+
+{
+name:"Dr. Mohan Krishna",
+department:"Urology",
+phone:"9876507777",
+start:"08:00 AM",
+end:"01:00 PM"
+},
+
+
+{
+name:"Dr. Lakshmi Devi",
+department:"Nephrology",
+phone:"9876508888",
+start:"12:00 PM",
+end:"06:00 PM"
+},
+
+
+{
+name:"Dr. Arjun Varma",
+department:"Pulmonology",
+phone:"9876509999",
+start:"09:00 AM",
+end:"03:00 PM"
+},
+
+
+{
+name:"Dr. Keerthi Rao",
+department:"Oncology",
+phone:"9876510000",
+start:"11:00 AM",
+end:"05:00 PM"
+},
+
+
+{
+name:"Dr. Harish Kumar",
+department:"Radiology",
+phone:"9876511111",
+start:"09:00 AM",
+end:"02:00 PM"
+},
+
+
+{
+name:"Dr. Swathi Reddy",
+department:"Physiotherapy",
+phone:"9876512222",
+start:"08:30 AM",
+end:"04:30 PM"
+},
+
+
+{
+name:"Dr. Prakash Singh",
+department:"Gastroenterology",
+phone:"9876513333",
+start:"10:30 AM",
+end:"05:30 PM"
+},
+
+
+{
+name:"Dr. Meena Joseph",
+department:"Endocrinology",
+phone:"9876514444",
+start:"09:00 AM",
+end:"01:00 PM"
+},
+
+
+{
+name:"Dr. Arun Kumar",
+department:"Blood Department",
+phone:"9876515555",
+start:"10:00 AM",
+end:"04:00 PM"
+},
+{
+    name:"Dr. Rajesh Kumar",
+    department:"Emergency",
+    phone:"9876516666",
+    start:"12:00 AM",
+    end:"08:00 AM"
+},
+
+{
+    name:"Dr. Priyanka Reddy",
+    department:"Emergency",
+    phone:"9876517777",
+    start:"08:00 AM",
+    end:"04:00 PM"
+},
+
+{
+    name:"Dr. Karthik Rao",
+    department:"Emergency",
+    phone:"9876518888",
+    start:"04:00 PM",
+    end:"12:00 AM"
+}
+
+];
+
+
+
+
+// Convert time to minutes
+
+function convertToMinutes(time){
+
+
+let parts=time.split(" ");
+
+let hm=parts[0].split(":");
+
+let hour=parseInt(hm[0]);
+
+let minute=parseInt(hm[1]);
+
+let period=parts[1];
+
+
+if(period=="PM" && hour!=12){
+hour+=12;
+}
+
+
+if(period=="AM" && hour==12){
+hour=0;
+}
+
+
+return hour*60+minute;
+
+
+}
+
+
+
+
+function updateDoctors(){
+
+
+let tbody=document.getElementById("doctorTable");
+
+
+tbody.innerHTML="";
+
+
+let now=new Date();
+
+
+let currentMinutes=
+now.getHours()*60+now.getMinutes();
+
+
+
+doctors.forEach((doc,index)=>{
+
+
+let start=
+convertToMinutes(doc.start);
+
+
+let end=
+convertToMinutes(doc.end);
+
+let status;
+
+if (start <= end) {
+    // Normal timing
+    status = currentMinutes >= start && currentMinutes <= end;
+} else {
+    // Overnight timing (example: 04:00 PM - 12:00 AM)
+    status = currentMinutes >= start || currentMinutes <= end;
+}
+
+
+
+
+
+tbody.innerHTML+=`
+
+<tr>
+
+<td>${index+1}</td>
+
+<td>${doc.name}</td>
+
+<td>${doc.department}</td>
+
+<td>${doc.phone}</td>
+
+<td>${doc.start} - ${doc.end}</td>
+
+
+<td class="${status?'available':'notavailable'}">
+
+${status?'🟢 Available':'🔴 Not Available'}
+
+</td>
+
+
+</tr>
+
+
+`;
+
+
+
+});
+
+
+}
+
+
+
+updateDoctors();
+
+
+// update every 1 minute
+
+setInterval(updateDoctors,60000);
+
+
+
+</script>
+
+
+</body>
+</html>

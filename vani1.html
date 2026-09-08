@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Hospital Appointment</title>
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+background:#f4f7fc;
+margin:0;
+padding:20px;
+}
+
+.container{
+width:90%;
+max-width:1100px;
+margin:auto;
+background:white;
+padding:25px;
+border-radius:10px;
+box-shadow:0 0 10px gray;
+box-sizing:border-box;
+}
+
+h2{
+text-align:center;
+color:#0d6efd;
+margin-bottom:25px;
+}
+
+label{
+font-weight:bold;
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin:8px 0 15px;
+box-sizing:border-box;
+}
+
+button{
+padding:10px 15px;
+background:#0077b6;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
+margin:5px;
+}
+
+button:hover{
+background:#023e8a;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<button onclick="window.location.href='home1.html'">
+🏠 Home
+</button>
+
+
+<h2>
+🏥 Hospital Appointment Management
+</h2>
+
+
+<label>Patient Name</label>
+<input type="text" id="name">
+
+
+<label>Phone Number</label>
+<input type="text" id="phone">
+
+
+<label>Select Disease</label>
+
+<select id="disease" onchange="findDoctor()">
+
+<option value="">Select Disease</option>
+
+<option>Heart Problem</option>
+<option>Brain Problem</option>
+<option>Bone Problem</option>
+<option>Skin Problem</option>
+<option>General Problem</option>
+<option>Women Problem</option>
+<option>Child Problems</option>
+<option>Ear Nose Throat Problem</option>
+<option>Eye Problem</option>
+<option>Mental Health Problem</option>
+<option>Dental Problem</option>
+<option>Urine Problem</option>
+<option>Kidney Problem</option>
+<option>Lung Problem</option>
+<option>Cancer Problem</option>
+<option>Scan Problem</option>
+<option>Exercise Problem</option>
+<option>Stomach Problem</option>
+<option>Hormone Problem</option>
+<option>Blood Problem</option>
+<option>Emergency Problem</option>
+
+</select>
+
+
+<label>Department</label>
+
+<input
+type="text"
+id="department"
+readonly
+>
+
+
+<label>Doctor</label>
+
+<input
+type="text"
+id="doctor"
+readonly
+>
+
+
+<label>Doctor Available Time</label>
+
+<input
+type="text"
+id="doctorTime"
+readonly
+>
+
+
+<label>Appointment Time</label>
+
+<input
+type="text"
+id="appointmentTime"
+readonly
+>
+
+
+<label>Appointment Date</label>
+
+<input
+type="date"
+id="date"
+readonly
+>
+
+
+<button onclick="bookAppointment()">
+Book Appointment
+</button>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =====================================================
+   DOCTOR DATA
+===================================================== */
+
+const doctors=[
+
+["Heart Problem","Cardiology","Dr. John Smith","09:00 AM - 05:00 PM"],
+
+["Heart Problem","Cardiology","Dr. Emily Brown","01:00 PM - 04:00 PM"],
+
+["Brain Problem","Neurology","Dr. David Wilson","09:00 AM - 05:00 PM"],
+
+["Bone Problem","Orthopedic","Dr. Rahul Kumar","09:00 AM - 12:00 PM"],
+
+["Skin Problem","Dermatology","Dr. Vivek Reddy","09:00 AM - 12:00 PM"],
+
+["General Problem","General Medicine","Dr. Suresh Babu","08:00 AM - 03:00 PM"],
+
+["Women Problem","Gynecology","Dr. Anjali Sharma","09:00 AM - 01:00 PM"],
+
+["Child Problems","Pediatrics","Dr. Priya Rao","11:00 AM - 06:00 PM"],
+
+["Ear Nose Throat Problem","ENT","Dr. Ramesh Kumar","09:30 AM - 01:30 PM"],
+
+["Eye Problem","Ophthalmology","Dr. Kiran Patel","10:00 AM - 05:00 PM"],
+
+["Mental Health Problem","Psychiatry","Dr. Naveen Reddy","02:00 PM - 07:00 PM"],
+
+["Dental Problem","Dentistry","Dr. Sneha Gupta","09:00 AM - 04:00 PM"],
+
+["Urine Problem","Urology","Dr. Mohan Krishna","08:00 AM - 01:00 PM"],
+
+["Kidney Problem","Nephrology","Dr. Lakshmi Devi","12:00 PM - 06:00 PM"],
+
+["Lung Problem","Pulmonology","Dr. Arjun Varma","09:00 AM - 03:00 PM"],
+
+["Cancer Problem","Oncology","Dr. Keerthi Rao","11:00 AM - 05:00 PM"],
+
+["Scan Problem","Radiology","Dr. Harish Kumar","09:00 AM - 02:00 PM"],
+
+["Exercise Problem","Physiotherapy","Dr. Swathi Reddy","08:30 AM - 04:30 PM"],
+
+["Stomach Problem","Gastroenterology","Dr. Prakash Singh","10:30 AM - 05:30 PM"],
+
+["Hormone Problem","Endocrinology","Dr. Meena Joseph","09:00 AM - 01:00 PM"],
+
+["Blood Problem","Blood Department","Dr. Arun Kumar","10:00 AM - 04:00 PM"],
+
+["Emergency Problem","Emergency","Dr. Rajesh Kumar","12:00 AM - 08:00 AM"],
+
+["Emergency Problem","Emergency","Dr. Priyanka Reddy","08:00 AM - 04:00 PM"],
+
+["Emergency Problem","Emergency","Dr. Karthik Rao","04:00 PM - 12:00 AM"]
+
+];
+
+
+
+/* =====================================================
+   DATE FUNCTIONS
+===================================================== */
+
+function formatDate(date){
+
+return date.getFullYear()
++
+"-"
++
+String(date.getMonth()+1).padStart(2,"0")
++
+"-"
++
+String(date.getDate()).padStart(2,"0");
+
+}
+
+
+function getToday(){
+
+return formatDate(new Date());
+
+}
+
+
+/* Set today's date initially */
+
+document.getElementById("date").value=getToday();
+
+
+
+/* =====================================================
+   TIME → MINUTES
+===================================================== */
+
+function convertTime(time){
+
+let parts=time.trim().split(" ");
+
+let hm=parts[0].split(":");
+
+let h=parseInt(hm[0]);
+
+let m=parseInt(hm[1]);
+
+if(parts[1]==="PM" && h!==12){
+h+=12;
+}
+
+if(parts[1]==="AM" && h===12){
+h=0;
+}
+
+return h*60+m;
+
+}
+
+
+
+/* =====================================================
+   MINUTES → TIME
+===================================================== */
+
+function minutesToTime(minutes){
+
+let h=Math.floor(minutes/60);
+
+let m=minutes%60;
+
+let ampm=h>=12 ? "PM" : "AM";
+
+let displayHour=h%12;
+
+if(displayHour===0){
+displayHour=12;
+}
+
+return String(displayHour).padStart(2,"0")
++
+":"
++
+String(m).padStart(2,"0")
++
+" "
++
+ampm;
+
+}
+
+
+
+/* =====================================================
+   GET APPOINTMENTS
+===================================================== */
+
+function getAppointments(){
+
+return JSON.parse(
+localStorage.getItem("appointments")
+) || [];
+
+}
+
+
+
+/* =====================================================
+   FIND NEXT FREE SLOT FOR A PARTICULAR DATE
+===================================================== */
+function getFreeSlotForDate(
+    doctorName,
+    doctorAvailableTime,
+    date
+){
+
+    let times = doctorAvailableTime.split(" - ");
+
+    let start = convertTime(times[0]);
+    let end = convertTime(times[1]);
+
+    // 12:00 AM means midnight / end of the day
+    if(end === 0){
+        end = 1440;
+    }
+
+    let appointments = getAppointments();
+
+    let today = getToday();
+
+    // If appointment is today,
+    // don't show slots that already passed
+    if(date === today){
+
+        let now = new Date();
+
+        let currentMinutes =
+            now.getHours() * 60 +
+            now.getMinutes();
+
+        if(currentMinutes > start){
+
+            start =
+                Math.ceil(currentMinutes / 30) * 30;
+        }
+    }
+
+    // Check every 30 minutes
+    for(
+        let time = start;
+        time < end;
+        time += 30
+    ){
+
+        let slot = minutesToTime(time);
+
+        let booked = appointments.some(function(a){
+
+            return(
+                a.doctor === doctorName &&
+                a.date === date &&
+                a.appointmentTime === slot &&
+                a.status === "Booked"
+            );
+
+        });
+
+        if(!booked){
+
+            return slot;
+        }
+    }
+
+    return null;
+}
+
+
+
+
+
+/* =====================================================
+   FIND NEXT AVAILABLE DATE + TIME
+===================================================== */
+
+function findNextAvailableSlot(
+doctorName,
+doctorAvailableTime
+){
+
+let startDate=new Date();
+
+
+/*
+   Search maximum 365 days.
+*/
+
+for(let i=0;i<365;i++){
+
+let checkDate=new Date(startDate);
+
+checkDate.setDate(
+startDate.getDate()+i
+);
+
+
+let date=formatDate(checkDate);
+
+
+let freeTime=
+getFreeSlotForDate(
+doctorName,
+doctorAvailableTime,
+date
+);
+
+
+if(freeTime){
+
+return{
+
+date:date,
+time:freeTime
+
+};
+
+}
+
+}
+
+
+return null;
+
+}
+
+
+
+/* =====================================================
+   FIND DOCTOR
+===================================================== */
+
+function findDoctor(){
+
+let disease=
+document.getElementById("disease").value;
+
+
+let department=
+document.getElementById("department");
+
+let doctor=
+document.getElementById("doctor");
+
+let doctorTime=
+document.getElementById("doctorTime");
+
+let appointmentTime=
+document.getElementById("appointmentTime");
+
+let date=
+document.getElementById("date");
+
+
+/*
+   Clear old values
+*/
+
+department.value="";
+
+doctor.value="";
+
+doctorTime.value="";
+
+appointmentTime.value="";
+
+date.value=getToday();
+
+
+if(!disease){
+
+return;
+
+}
+
+
+
+/* =====================================================
+   EMERGENCY DOCTOR
+===================================================== */
+
+if(disease === "Emergency Problem"){
+
+    let now = new Date();
+
+    let currentMinutes =
+        now.getHours() * 60 +
+        now.getMinutes();
+
+    let result = null;
+
+    if(currentMinutes < 480){
+
+        result = doctors.find(
+            d => d[2] === "Dr. Rajesh Kumar"
+        );
+
+    }
+    else if(currentMinutes < 960){
+
+        result = doctors.find(
+            d => d[2] === "Dr. Priyanka Reddy"
+        );
+
+    }
+    else{
+
+        result = doctors.find(
+            d => d[2] === "Dr. Karthik Rao"
+        );
+
+    }
+
+    if(result){
+
+        department.value = result[1];
+
+        doctor.value = result[2];
+
+        doctorTime.value = result[3];
+
+        let slot = findNextAvailableSlot(
+            result[2],
+            result[3]
+        );
+
+        if(slot){
+
+            date.value = slot.date;
+
+            appointmentTime.value = slot.time;
+
+        }
+        else{
+
+            date.value = "";
+
+            appointmentTime.value =
+                "No Slots Available";
+
+        }
+    }
+
+    return;
+}
+
+
+/* =====================================================
+   NORMAL DISEASE
+===================================================== */
+
+/* =====================================================
+   NORMAL DISEASE
+===================================================== */
+
+let matchingDoctors = doctors.filter(
+    d => d[0] === disease
+);
+
+let result;
+
+if(matchingDoctors.length === 1){
+
+    result = matchingDoctors[0];
+
+}else{
+
+    let now = new Date();
+
+    let currentMinutes =
+        now.getHours() * 60 +
+        now.getMinutes();
+
+    result = matchingDoctors.find(d => {
+
+        let times = d[3].split(" - ");
+
+        let start = convertTime(times[0]);
+        let end = convertTime(times[1]);
+
+        return currentMinutes >= start &&
+               currentMinutes < end;
+
+    });
+
+    if(!result){
+        result = matchingDoctors[0];
+    }
+}
+
+if(!result){
+    return;
+}
+
+department.value = result[1];
+
+doctor.value = result[2];
+
+doctorTime.value = result[3];
+/*
+   VERY IMPORTANT:
+
+   Existing appointments are checked here.
+
+   If today's doctor time is over,
+   automatically moves to tomorrow.
+
+   If tomorrow is full,
+   automatically moves to next day.
+*/
+
+let slot=
+findNextAvailableSlot(
+result[2],
+result[3]
+);
+
+
+if(slot){
+
+date.value=slot.date;
+
+appointmentTime.value=slot.time;
+
+}
+
+else{
+
+date.value="";
+
+appointmentTime.value=
+"No Slots Available";
+
+}
+
+}
+
+
+
+/* =====================================================
+   BOOK APPOINTMENT
+===================================================== */
+
+function bookAppointment(){
+
+
+let appointment={
+
+name:
+document.getElementById("name").value.trim(),
+
+phone:
+document.getElementById("phone").value.trim(),
+
+disease:
+document.getElementById("disease").value,
+
+department:
+document.getElementById("department").value,
+
+doctor:
+document.getElementById("doctor").value,
+
+doctorTime:
+document.getElementById("doctorTime").value,
+
+appointmentTime:
+document.getElementById("appointmentTime").value,
+
+date:
+document.getElementById("date").value,
+
+status:"Booked"
+
+};
+
+
+
+/* =====================================================
+   VALIDATION
+===================================================== */
+
+if(
+!appointment.name ||
+!appointment.phone ||
+!appointment.disease
+){
+
+alert("Please enter patient details");
+
+return;
+
+}
+
+
+if(
+!appointment.doctor ||
+!appointment.appointmentTime ||
+appointment.appointmentTime==="No Slots Available" ||
+!appointment.date
+){
+
+alert("No appointment slot available");
+
+return;
+
+}
+
+
+
+/* =====================================================
+   GET OLD APPOINTMENTS
+===================================================== */
+
+let appointments=getAppointments();
+
+
+
+/* =====================================================
+   FINAL SLOT CHECK
+===================================================== */
+
+let alreadyBooked=
+appointments.some(function(a){
+
+return(
+
+a.doctor===appointment.doctor &&
+
+a.date===appointment.date &&
+
+a.appointmentTime===
+appointment.appointmentTime &&
+
+a.status==="Booked"
+
+);
+
+});
+
+
+/*
+   If somebody booked the same slot,
+   calculate again automatically.
+*/
+
+if(alreadyBooked){
+
+alert(
+"This slot was just booked. Finding next available slot."
+);
+
+findDoctor();
+
+return;
+
+}
+
+
+
+/* =====================================================
+   SAVE NEW APPOINTMENT
+===================================================== */
+
+appointments.push(appointment);
+
+
+localStorage.setItem(
+"appointments",
+JSON.stringify(appointments)
+);
+
+
+
+/* =====================================================
+   SUCCESS
+===================================================== */
+
+alert(
+"✅ Appointment Booked Successfully\n\n"+
+"Patient: "+appointment.name+
+"\nDoctor: "+appointment.doctor+
+"\nAppointment Time: "+appointment.appointmentTime+
+"\nAppointment Date: "+appointment.date
+);
+
+
+
+/*
+   Clear patient information
+*/
+
+document.getElementById("name").value="";
+
+document.getElementById("phone").value="";
+
+
+
+/*
+   IMPORTANT:
+
+   Recalculate after booking.
+
+   So next patient automatically gets
+   the next free slot.
+*/
+
+findDoctor();
+
+}
+
+</script>
+
+
+</body>
+
+</html>
