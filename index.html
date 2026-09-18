@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,14 +11,10 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Arial, sans-serif;
+    font-family:Arial,sans-serif;
 }
+body{background:#f4f4f4;}
 
-body{
-    background:#f4f4f4;
-}
-
-/* Navigation */
 nav{
     background:#0d47a1;
     color:white;
@@ -26,34 +23,20 @@ nav{
     align-items:center;
     padding:15px 50px;
 }
-
-nav h2{
-    font-size:28px;
-}
-
-nav ul{
-    list-style:none;
-    display:flex;
-}
-
-nav ul li{
-    margin-left:25px;
-}
-
+nav h2{font-size:28px;}
+nav ul{list-style:none;display:flex;}
+nav ul li{margin-left:25px;}
 nav ul li a{
     color:white;
     text-decoration:none;
     font-weight:bold;
 }
+nav ul li a:hover{color:yellow;}
 
-nav ul li a:hover{
-    color:yellow;
-}
-
-/* Hero Section */
 .hero{
     height:85vh;
-    background:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.5)),
+    background:
+    linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.5)),
     url("https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=1400&q=80");
     background-size:cover;
     background-position:center;
@@ -63,35 +46,27 @@ nav ul li a:hover{
     text-align:center;
     color:white;
 }
-
 .hero h1{
     font-size:55px;
     margin-bottom:15px;
 }
+.hero p{font-size:22px;}
 
-.hero p{
-    font-size:22px;
-}
-
-/* Services */
 .services{
     padding:60px 40px;
     text-align:center;
     background:white;
 }
-
 .services h2{
     margin-bottom:40px;
     color:#0d47a1;
 }
-
 .cards{
     display:flex;
     justify-content:center;
     flex-wrap:wrap;
     gap:25px;
 }
-
 .card{
     width:220px;
     background:white;
@@ -99,13 +74,11 @@ nav ul li a:hover{
     border-radius:10px;
     box-shadow:0 0 10px rgba(0,0,0,.2);
 }
-
 .card h3{
     color:#0d47a1;
     margin-bottom:10px;
 }
 
-/* Counter */
 .counter{
     background:#1976d2;
     color:white;
@@ -114,16 +87,9 @@ nav ul li a:hover{
     padding:40px 20px;
     flex-wrap:wrap;
 }
+.counter div{text-align:center;}
+.counter h1{font-size:45px;}
 
-.counter div{
-    text-align:center;
-}
-
-.counter h1{
-    font-size:45px;
-}
-
-/* Footer */
 footer{
     background:#0d47a1;
     color:white;
@@ -131,8 +97,8 @@ footer{
     padding:20px;
 }
 </style>
-
 </head>
+
 <body>
 
 <nav>
@@ -143,6 +109,7 @@ footer{
 <li><a href="patient1.html">Patient</a></li>
 <li><a href="vani1.html">Appointments</a></li>
 <li><a href="billing3.html">Billing</a></li>
+<li><a href="login.html">Admin</a></li>
 </ul>
 </nav>
 
@@ -213,3 +180,4 @@ footer{
 
 </body>
 </html>
+
