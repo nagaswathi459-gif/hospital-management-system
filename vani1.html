@@ -174,6 +174,28 @@ Book Appointment
 
 
 
+
+<!-- =====================================================
+     FIREBASE FIRESTORE
+===================================================== -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+</script>
+
+
 <script>
 
 
@@ -331,11 +353,37 @@ ampm;
    GET APPOINTMENTS
 ===================================================== */
 
-function getAppointments(){
+async function getAppointments(){
 
-return JSON.parse(
-localStorage.getItem("appointments")
-) || [];
+try{
+
+const snapshot =
+await db.collection("appointments").get();
+
+let appointments=[];
+
+snapshot.forEach(function(doc){
+
+appointments.push({
+
+id:doc.id,
+
+...doc.data()
+
+});
+
+});
+
+return appointments;
+
+}
+catch(error){
+
+console.error("Error getting appointments:",error);
+
+return [];
+
+}
 
 }
 
@@ -344,7 +392,7 @@ localStorage.getItem("appointments")
 /* =====================================================
    FIND NEXT FREE SLOT FOR A PARTICULAR DATE
 ===================================================== */
-function getFreeSlotForDate(
+async function getFreeSlotForDate(
     doctorName,
     doctorAvailableTime,
     date
@@ -418,7 +466,7 @@ function getFreeSlotForDate(
    FIND NEXT AVAILABLE DATE + TIME
 ===================================================== */
 
-function findNextAvailableSlot(
+async function findNextAvailableSlot(
 doctorName,
 doctorAvailableTime
 ){
@@ -443,7 +491,7 @@ let date=formatDate(checkDate);
 
 
 let freeTime=
-getFreeSlotForDate(
+await getFreeSlotForDate(
 doctorName,
 doctorAvailableTime,
 date
@@ -474,7 +522,7 @@ return null;
    FIND DOCTOR
 ===================================================== */
 
-function findDoctor(){
+async function findDoctor(){
 
 let disease=
 document.getElementById("disease").value;
@@ -654,7 +702,7 @@ doctorTime.value = result[3];
 */
 
 let slot=
-findNextAvailableSlot(
+await findNextAvailableSlot(
 result[2],
 result[3]
 );
@@ -685,7 +733,7 @@ appointmentTime.value=
    BOOK APPOINTMENT
 ===================================================== */
 
-function bookAppointment(){
+async function bookAppointment(){
 
 
 let appointment={
@@ -756,7 +804,7 @@ return;
    GET OLD APPOINTMENTS
 ===================================================== */
 
-let appointments=getAppointments();
+let appointments=await getAppointments();
 
 
 
@@ -794,7 +842,7 @@ alert(
 "This slot was just booked. Finding next available slot."
 );
 
-findDoctor();
+await findDoctor();
 
 return;
 
@@ -806,13 +854,9 @@ return;
    SAVE NEW APPOINTMENT
 ===================================================== */
 
-appointments.push(appointment);
-
-
-localStorage.setItem(
-"appointments",
-JSON.stringify(appointments)
-);
+await db
+.collection("appointments")
+.add(appointment);
 
 
 
@@ -849,7 +893,7 @@ document.getElementById("phone").value="";
    the next free slot.
 */
 
-findDoctor();
+await findDoctor();
 
 }
 
