@@ -341,11 +341,9 @@ button:hover{
 
 </head>
 
-
 <body>
 
-
-<!-- ================= HEADER ================= -->
+<!-- HEADER -->
 
 <header>
 
@@ -369,7 +367,7 @@ button:hover{
 <div class="container">
 
 
-<!-- ================= PATIENT DETAILS ================= -->
+<!-- PATIENT DETAILS -->
 
 <div class="card">
 
@@ -466,8 +464,7 @@ button:hover{
 </div>
 
 
-
-<!-- ================= SERVICES ================= -->
+<!-- SERVICES -->
 
 <div class="card">
 
@@ -582,8 +579,7 @@ button:hover{
 </div>
 
 
-
-<!-- ================= PAYMENT DETAILS ================= -->
+<!-- PAYMENT -->
 
 <div class="card">
 
@@ -709,8 +705,7 @@ button:hover{
 </div>
 
 
-
-<!-- ================= BILL HISTORY ================= -->
+<!-- BILL HISTORY -->
 
 <div class="card">
 
@@ -755,8 +750,45 @@ button:hover{
 </div>
 
 
+<!-- FIREBASE -->
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
 
 <script>
+
+/* =====================================================
+   FIREBASE CONFIG
+===================================================== */
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyAjjzBZJaLq2B_omm62eHMYYcvaPAB3Gy0",
+
+    authDomain:
+        "hospital-management-syst-e5bef.firebaseapp.com",
+
+    projectId:
+        "hospital-management-syst-e5bef",
+
+    storageBucket:
+        "hospital-management-syst-e5bef.firebasestorage.app",
+
+    messagingSenderId:
+        "774381537399",
+
+    appId:
+        "1:774381537399:web:d6bad35fdf10eca6cf5e72"
+
+};
+
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
 
 
 /* =====================================================
@@ -776,25 +808,15 @@ let isAdmin =
     ).toLowerCase() === "admin";
 
 
-
 /* =====================================================
    DATA
 ===================================================== */
 
-let appointments =
-    JSON.parse(
-        localStorage.getItem("appointments")
-    ) || [];
+let appointments = [];
 
-
-let bills =
-    JSON.parse(
-        localStorage.getItem("hospitalBilling")
-    ) || [];
-
+let bills = [];
 
 let selectedPatient = null;
-
 
 
 /* =====================================================
@@ -824,65 +846,194 @@ function showUserBadge(){
 }
 
 
+/* =====================================================
+   CONVERT FIRESTORE APPOINTMENT
+   SUPPORTS BOTH NEW + OLD FIELD NAMES
+===================================================== */
+
+function convertAppointment(doc){
+
+    const data = doc.data() || {};
+
+    return {
+
+        id:doc.id,
+
+        name:
+            data.name ||
+            data.patientName ||
+            data.patient ||
+            data["Patient Name"] ||
+            "Unknown",
+
+        phone:
+            data.phone ||
+            data.patientPhone ||
+            data.mobile ||
+            data["Phone Number"] ||
+            "N/A",
+
+        disease:
+            data.disease ||
+            data.problem ||
+            data.healthIssue ||
+            data["Disease"] ||
+            "N/A",
+
+        department:
+            data.department ||
+            data.specialization ||
+            data["Department"] ||
+            "N/A",
+
+        doctor:
+            data.doctor ||
+            data.doctorName ||
+            data["Doctor"] ||
+            "Not Assigned",
+
+        doctorTime:
+            data.doctorTime ||
+            data.availableTime ||
+            data["Doctor Time"] ||
+            (data.start && data.end
+                ? data.start + " - " + data.end
+                : "N/A"),
+
+        appointmentTime:
+            data.appointmentTime ||
+            data.time ||
+            data["Appointment Time"] ||
+            "N/A",
+
+        date:
+            data.date ||
+            data.appointmentDate ||
+            data["Appointment Date"] ||
+            "N/A",
+
+        status:
+            data.status ||
+            "Booked"
+
+    };
+
+}
+
 
 /* =====================================================
-   LOAD PATIENTS
+   LOAD PATIENTS FROM FIRESTORE
 ===================================================== */
 
 function loadPatients(){
 
-    const select =
-        document.getElementById("patientSelect");
+    db.collection("appointments").onSnapshot(
+
+        function(snapshot){
+
+            appointments = [];
+
+            snapshot.forEach(function(doc){
+
+                appointments.push(
+                    convertAppointment(doc)
+                );
+
+            });
 
 
-    select.innerHTML =
-        `
-        <option value="">
-            -- Select Patient --
-        </option>
-        `;
+            const select =
+                document.getElementById(
+                    "patientSelect"
+                );
 
 
-    if(
-        !appointments ||
-        appointments.length === 0
-    ){
-
-        return;
-
-    }
+            const oldValue =
+                select.value;
 
 
-    appointments.forEach(
-        (patient,index)=>{
+            select.innerHTML = `
 
-            const option =
-                document.createElement("option");
+                <option value="">
+                    -- Select Patient --
+                </option>
 
-
-            option.value =
-                index;
+            `;
 
 
-            option.textContent =
-                (patient.name || "Unknown") +
-                " - " +
-                (patient.phone || "") +
-                " - " +
-                (patient.disease || "");
+            if(
+                appointments.length === 0
+            ){
+
+                return;
+
+            }
 
 
-            select.appendChild(option);
+            appointments.forEach(function(patient){
+
+                const option =
+                    document.createElement("option");
+
+
+                option.value =
+                    patient.id;
+
+
+                option.textContent =
+                    patient.name +
+                    " - " +
+                    patient.phone +
+                    " - " +
+                    patient.disease;
+
+
+                select.appendChild(option);
+
+            });
+
+
+            /*
+              If same patient still exists,
+              keep selected patient.
+            */
+
+            if(
+                oldValue &&
+                appointments.some(
+                    p => p.id === oldValue
+                )
+            ){
+
+                select.value = oldValue;
+
+            }
+
+
+        },
+
+        function(error){
+
+            console.error(
+                "Patient Load Error:",
+                error
+            );
+
+
+            alert(
+                "❌ Unable to load patients.\n\n" +
+                error.message
+            );
 
         }
+
     );
 
 }
 
 
-
 /* =====================================================
-   LOAD PATIENT
+   LOAD SELECTED PATIENT
 ===================================================== */
 
 function loadPatient(){
@@ -905,9 +1056,10 @@ function loadPatient(){
 
 
     selectedPatient =
-        appointments[
-            Number(value)
-        ];
+        appointments.find(
+            patient =>
+                patient.id === value
+        );
 
 
     if(!selectedPatient){
@@ -947,14 +1099,11 @@ function loadPatient(){
         selectedPatient.doctor || "-";
 
 
-    /* AUTOMATIC SERVICES */
-
     generateServices(
         selectedPatient.disease || ""
     );
 
 }
-
 
 
 /* =====================================================
@@ -990,8 +1139,8 @@ function clearPatientDetails(){
 
     document.getElementById(
         "serviceBody"
-    ).innerHTML =
-        `
+    ).innerHTML = `
+
         <tr>
 
             <td
@@ -1003,7 +1152,8 @@ function clearPatientDetails(){
             </td>
 
         </tr>
-        `;
+
+    `;
 
 
     document.getElementById(
@@ -1023,7 +1173,6 @@ function clearPatientDetails(){
 }
 
 
-
 /* =====================================================
    DISEASE SERVICES
 ===================================================== */
@@ -1035,8 +1184,6 @@ function getServicesByDisease(disease){
         .toLowerCase()
         .trim();
 
-
-    /* HEART */
 
     if(
         d.includes("heart") ||
@@ -1066,9 +1213,6 @@ function getServicesByDisease(disease){
     }
 
 
-
-    /* BRAIN */
-
     if(
         d.includes("brain") ||
         d.includes("neuro")
@@ -1095,9 +1239,6 @@ function getServicesByDisease(disease){
 
     }
 
-
-
-    /* BONE */
 
     if(
         d.includes("bone") ||
@@ -1127,9 +1268,6 @@ function getServicesByDisease(disease){
     }
 
 
-
-    /* SKIN */
-
     if(
         d.includes("skin") ||
         d.includes("derma")
@@ -1157,9 +1295,6 @@ function getServicesByDisease(disease){
     }
 
 
-
-    /* EYE */
-
     if(
         d.includes("eye") ||
         d.includes("vision")
@@ -1181,9 +1316,6 @@ function getServicesByDisease(disease){
 
     }
 
-
-
-    /* ENT */
 
     if(
         d.includes("ent") ||
@@ -1209,9 +1341,6 @@ function getServicesByDisease(disease){
     }
 
 
-
-    /* DENTAL */
-
     if(
         d.includes("dental") ||
         d.includes("tooth") ||
@@ -1234,9 +1363,6 @@ function getServicesByDisease(disease){
 
     }
 
-
-
-    /* KIDNEY */
 
     if(
         d.includes("kidney") ||
@@ -1266,9 +1392,6 @@ function getServicesByDisease(disease){
     }
 
 
-
-    /* LUNG */
-
     if(
         d.includes("lung") ||
         d.includes("asthma") ||
@@ -1297,9 +1420,6 @@ function getServicesByDisease(disease){
     }
 
 
-
-    /* CANCER */
-
     if(
         d.includes("cancer") ||
         d.includes("tumor")
@@ -1326,9 +1446,6 @@ function getServicesByDisease(disease){
 
     }
 
-
-
-    /* PREGNANCY */
 
     if(
         d.includes("pregnancy") ||
@@ -1359,9 +1476,6 @@ function getServicesByDisease(disease){
     }
 
 
-
-    /* CHILD */
-
     if(
         d.includes("child") ||
         d.includes("pediatric") ||
@@ -1385,9 +1499,6 @@ function getServicesByDisease(disease){
     }
 
 
-
-    /* PHYSIO */
-
     if(
         d.includes("physio") ||
         d.includes("muscle")
@@ -1410,9 +1521,6 @@ function getServicesByDisease(disease){
     }
 
 
-
-    /* DEFAULT */
-
     return [
 
         {
@@ -1423,7 +1531,6 @@ function getServicesByDisease(disease){
     ];
 
 }
-
 
 
 /* =====================================================
@@ -1459,7 +1566,7 @@ function generateServices(disease){
                 </td>
 
                 <td>
-                    ${service.name}
+                    ${escapeHTML(service.name)}
                 </td>
 
                 <td>
@@ -1495,7 +1602,6 @@ function generateServices(disease){
     calculateTotal();
 
 }
-
 
 
 /* =====================================================
@@ -1627,9 +1733,8 @@ function calculateTotal(){
 }
 
 
-
 /* =====================================================
-   GET SERVICES
+   GET BILL SERVICES
 ===================================================== */
 
 function getBillServices(){
@@ -1700,9 +1805,8 @@ function getBillServices(){
 }
 
 
-
 /* =====================================================
-   DIRECT PAYMENT
+   MARK PAYMENT
 ===================================================== */
 
 function markPayment(){
@@ -1744,8 +1848,6 @@ function markPayment(){
         ).textContent;
 
 
-    /* DIRECTLY PAID */
-
     document.getElementById(
         "paymentStatus"
     ).value =
@@ -1763,7 +1865,7 @@ function markPayment(){
         "Payment Successful!\n\n" +
 
         "Patient: " +
-        (selectedPatient.name || "") +
+        selectedPatient.name +
 
         "\nPayment Method: " +
         method +
@@ -1778,12 +1880,11 @@ function markPayment(){
 }
 
 
-
 /* =====================================================
-   GENERATE BILL
+   GENERATE BILL AND SAVE TO FIRESTORE
 ===================================================== */
 
-function generateBill(){
+async function generateBill(){
 
     if(!selectedPatient){
 
@@ -1867,6 +1968,9 @@ function generateBill(){
             "BILL-" +
             Date.now(),
 
+        appointmentId:
+            selectedPatient.id,
+
         patientName:
             selectedPatient.name || "",
 
@@ -1910,47 +2014,411 @@ function generateBill(){
             status,
 
         createdAt:
-            new Date().toLocaleString()
+            new Date().toLocaleString(),
+
+        createdAtTimestamp:
+            firebase.firestore.FieldValue.serverTimestamp()
 
     };
 
 
-    bills.push(bill);
+    try{
+
+        const docRef =
+            await db
+            .collection("hospitalBilling")
+            .add(bill);
 
 
-    localStorage.setItem(
-        "hospitalBilling",
-        JSON.stringify(bills)
-    );
+        console.log(
+            "Bill saved:",
+            docRef.id
+        );
 
 
-    showMessage(
-        "Bill generated successfully! Bill ID: " +
-        bill.billId,
-        true
-    );
+        showMessage(
+
+            "Bill generated successfully! Bill ID: " +
+            bill.billId,
+
+            true
+
+        );
 
 
-    loadHistory();
+        alert(
+
+            "Bill Generated Successfully!\n\n" +
+
+            "Bill ID: " +
+            bill.billId +
+
+            "\nPatient: " +
+            bill.patientName +
+
+            "\nTotal: ₹" +
+            grandTotal.toFixed(2)
+
+        );
 
 
-    alert(
+    }
+    catch(error){
 
-        "Bill Generated Successfully!\n\n" +
+        console.error(
+            "Bill Save Error:",
+            error
+        );
 
-        "Bill ID: " +
-        bill.billId +
 
-        "\nPatient: " +
-        bill.patientName +
+        showMessage(
+            "Bill save failed: " +
+            error.message,
+            false
+        );
 
-        "\nTotal: ₹" +
-        grandTotal.toFixed(2)
+
+        alert(
+
+            "❌ Bill save failed.\n\n" +
+            error.message
+
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   BILL HISTORY FROM FIRESTORE
+===================================================== */
+
+function loadHistory(){
+
+    db.collection("hospitalBilling")
+    .orderBy("createdAtTimestamp","desc")
+    .onSnapshot(
+
+        function(snapshot){
+
+            bills = [];
+
+
+            snapshot.forEach(function(doc){
+
+                bills.push({
+
+                    id:doc.id,
+
+                    ...doc.data()
+
+                });
+
+            });
+
+
+            displayHistory();
+
+        },
+
+        function(error){
+
+            console.error(
+                "Billing History Error:",
+                error
+            );
+
+
+            /*
+              If old documents don't have
+              createdAtTimestamp, fallback
+              to normal collection read.
+            */
+
+            db.collection("hospitalBilling")
+            .onSnapshot(
+
+                function(snapshot){
+
+                    bills = [];
+
+                    snapshot.forEach(function(doc){
+
+                        bills.push({
+
+                            id:doc.id,
+
+                            ...doc.data()
+
+                        });
+
+                    });
+
+                    displayHistory();
+
+                },
+
+                function(secondError){
+
+                    console.error(
+                        "Fallback Billing Error:",
+                        secondError
+                    );
+
+
+                    document.getElementById(
+                        "historyBody"
+                    ).innerHTML = `
+
+                        <tr>
+
+                            <td
+                                colspan="10"
+                                class="empty">
+
+                                Unable to load bill history.
+
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                }
+
+            );
+
+        }
 
     );
 
 }
 
+
+/* =====================================================
+   DISPLAY BILL HISTORY
+===================================================== */
+
+function displayHistory(){
+
+    const tbody =
+        document.getElementById(
+            "historyBody"
+        );
+
+
+    tbody.innerHTML = "";
+
+
+    if(
+        !bills ||
+        bills.length === 0
+    ){
+
+        tbody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="10"
+                    class="empty">
+
+                    No bills generated yet.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    bills.forEach(
+        (bill,index)=>{
+
+            let statusClass =
+                "status-pending";
+
+
+            if(
+                bill.paymentStatus === "Paid"
+            ){
+
+                statusClass =
+                    "status-paid";
+
+            }
+
+            else if(
+                bill.paymentStatus ===
+                "Partially Paid"
+            ){
+
+                statusClass =
+                    "status-partial";
+
+            }
+
+
+            const row =
+                document.createElement("tr");
+
+
+            row.innerHTML = `
+
+                <td>
+                    ${index + 1}
+                </td>
+
+                <td>
+                    ${escapeHTML(
+                        bill.patientName
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHTML(
+                        bill.phone
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHTML(
+                        bill.disease
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHTML(
+                        bill.doctor
+                    )}
+                </td>
+
+                <td>
+                    ₹ ${Number(
+                        bill.grandTotal || 0
+                    ).toFixed(2)}
+                </td>
+
+                <td>
+                    ${escapeHTML(
+                        bill.paymentMethod || "-"
+                    )}
+                </td>
+
+                <td class="${statusClass}">
+                    ${escapeHTML(
+                        bill.paymentStatus ||
+                        "Pending"
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHTML(
+                        bill.createdAt || "-"
+                    )}
+                </td>
+
+                <td>
+
+                    ${
+                        isAdmin
+
+                        ?
+
+                        `
+                        <button
+                            class="btn-red"
+                            onclick="deleteBill('${bill.id}')">
+
+                            Delete
+
+                        </button>
+                        `
+
+                        :
+
+                        "View Only"
+                    }
+
+                </td>
+
+            `;
+
+
+            tbody.appendChild(row);
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   DELETE BILL - FIRESTORE
+===================================================== */
+
+async function deleteBill(documentId){
+
+    if(!isAdmin){
+
+        alert(
+            "Only Admin can delete bills."
+        );
+
+        return;
+
+    }
+
+
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to delete this bill?"
+        );
+
+
+    if(!confirmDelete){
+
+        return;
+
+    }
+
+
+    try{
+
+        await db
+            .collection("hospitalBilling")
+            .doc(documentId)
+            .delete();
+
+
+        alert(
+            "✅ Bill deleted successfully."
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            "Delete Bill Error:",
+            error
+        );
+
+
+        alert(
+
+            "❌ Bill delete failed.\n\n" +
+            error.message
+
+        );
+
+    }
+
+}
 
 
 /* =====================================================
@@ -2054,7 +2522,7 @@ function printBill(){
                     </td>
 
                     <td>
-                        ${service.name}
+                        ${escapeHTML(service.name)}
                     </td>
 
                     <td>
@@ -2194,23 +2662,23 @@ Patient Bill
 <div class="info">
 
 <strong>Patient Name:</strong>
-${name}
+${escapeHTML(name)}
 <br>
 
 <strong>Phone:</strong>
-${phone}
+${escapeHTML(phone)}
 <br>
 
 <strong>Disease:</strong>
-${disease}
+${escapeHTML(disease)}
 <br>
 
 <strong>Department:</strong>
-${department}
+${escapeHTML(department)}
 <br>
 
 <strong>Doctor:</strong>
-${doctor}
+${escapeHTML(doctor)}
 <br>
 
 </div>
@@ -2291,7 +2759,7 @@ Grand Total
 Payment Method:
 </strong>
 
-${method}
+${escapeHTML(method)}
 
 <br>
 
@@ -2299,7 +2767,7 @@ ${method}
 Payment Status:
 </strong>
 
-${status}
+${escapeHTML(status)}
 
 </div>
 
@@ -2334,7 +2802,6 @@ window.onload=function(){
     printWindow.document.close();
 
 }
-
 
 
 /* =====================================================
@@ -2373,224 +2840,6 @@ function clearBill(){
     hideMessage();
 
 }
-
-
-
-/* =====================================================
-   BILL HISTORY
-===================================================== */
-
-function loadHistory(){
-
-    const tbody =
-        document.getElementById(
-            "historyBody"
-        );
-
-
-    tbody.innerHTML = "";
-
-
-    if(
-        !bills ||
-        bills.length === 0
-    ){
-
-        tbody.innerHTML = `
-
-            <tr>
-
-                <td
-                    colspan="10"
-                    class="empty">
-
-                    No bills generated yet.
-
-                </td>
-
-            </tr>
-
-        `;
-
-        return;
-
-    }
-
-
-    bills.forEach(
-        (bill,index)=>{
-
-            const row =
-                document.createElement("tr");
-
-
-            let statusClass =
-                "status-pending";
-
-
-            if(
-                bill.paymentStatus === "Paid"
-            ){
-
-                statusClass =
-                    "status-paid";
-
-            }
-
-            else if(
-                bill.paymentStatus ===
-                "Partially Paid"
-            ){
-
-                statusClass =
-                    "status-partial";
-
-            }
-
-
-            row.innerHTML = `
-
-                <td>
-                    ${index + 1}
-                </td>
-
-                <td>
-                    ${escapeHTML(
-                        bill.patientName
-                    )}
-                </td>
-
-                <td>
-                    ${escapeHTML(
-                        bill.phone
-                    )}
-                </td>
-
-                <td>
-                    ${escapeHTML(
-                        bill.disease
-                    )}
-                </td>
-
-                <td>
-                    ${escapeHTML(
-                        bill.doctor
-                    )}
-                </td>
-
-                <td>
-                    ₹ ${Number(
-                        bill.grandTotal || 0
-                    ).toFixed(2)}
-                </td>
-
-                <td>
-                    ${escapeHTML(
-                        bill.paymentMethod || "-"
-                    )}
-                </td>
-
-                <td class="${statusClass}">
-                    ${escapeHTML(
-                        bill.paymentStatus ||
-                        "Pending"
-                    )}
-                </td>
-
-                <td>
-                    ${escapeHTML(
-                        bill.createdAt || "-"
-                    )}
-                </td>
-
-                <td>
-
-                    ${
-                        isAdmin
-
-                        ?
-
-                        `
-                        <button
-                            class="btn-red"
-                            onclick="deleteBill('${bill.billId}')">
-
-                            Delete
-
-                        </button>
-                        `
-
-                        :
-
-                        "View Only"
-                    }
-
-                </td>
-
-            `;
-
-
-            tbody.appendChild(row);
-
-        }
-    );
-
-}
-
-
-
-/* =====================================================
-   DELETE BILL - ADMIN ONLY
-===================================================== */
-
-function deleteBill(billId){
-
-    if(!isAdmin){
-
-        alert(
-            "Only Admin can delete bills."
-        );
-
-        return;
-
-    }
-
-
-    const confirmDelete =
-        confirm(
-            "Are you sure you want to delete this bill?"
-        );
-
-
-    if(!confirmDelete){
-
-        return;
-
-    }
-
-
-    bills =
-        bills.filter(
-            bill =>
-                bill.billId !== billId
-        );
-
-
-    localStorage.setItem(
-        "hospitalBilling",
-        JSON.stringify(bills)
-    );
-
-
-    loadHistory();
-
-
-    alert(
-        "Bill deleted successfully."
-    );
-
-}
-
 
 
 /* =====================================================
@@ -2641,16 +2890,23 @@ function hideMessage(){
 }
 
 
-
 /* =====================================================
    ESCAPE HTML
 ===================================================== */
 
 function escapeHTML(value){
 
-    return String(
-        value || ""
-    )
+    if(
+        value === null ||
+        value === undefined
+    ){
+
+        return "";
+
+    }
+
+
+    return String(value)
 
     .replace(
         /&/g,
@@ -2680,7 +2936,6 @@ function escapeHTML(value){
 }
 
 
-
 /* =====================================================
    HOME
 ===================================================== */
@@ -2691,7 +2946,6 @@ function goHome(){
         "index.html";
 
 }
-
 
 
 /* =====================================================
@@ -2705,7 +2959,6 @@ loadPatients();
 loadHistory();
 
 </script>
-
 
 </body>
 
