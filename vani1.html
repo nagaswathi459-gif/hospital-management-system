@@ -2,9 +2,7 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Hospital Appointment</title>
@@ -12,52 +10,52 @@
 <style>
 
 body{
-font-family:Arial,sans-serif;
-background:#f4f7fc;
-margin:0;
-padding:20px;
+    font-family:Arial,sans-serif;
+    background:#f4f7fc;
+    margin:0;
+    padding:20px
 }
 
 .container{
-width:90%;
-max-width:1100px;
-margin:auto;
-background:white;
-padding:25px;
-border-radius:10px;
-box-shadow:0 0 10px gray;
-box-sizing:border-box;
+    width:90%;
+    max-width:1100px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 0 10px gray;
+    box-sizing:border-box
 }
 
 h2{
-text-align:center;
-color:#0d6efd;
-margin-bottom:25px;
+    text-align:center;
+    color:#0d6efd;
+    margin-bottom:25px
 }
 
 label{
-font-weight:bold;
+    font-weight:bold
 }
 
 input,select{
-width:100%;
-padding:10px;
-margin:8px 0 15px;
-box-sizing:border-box;
+    width:100%;
+    padding:10px;
+    margin:8px 0 15px;
+    box-sizing:border-box
 }
 
 button{
-padding:10px 15px;
-background:#0077b6;
-color:white;
-border:none;
-border-radius:5px;
-cursor:pointer;
-margin:5px;
+    padding:10px 15px;
+    background:#0077b6;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    margin:5px
 }
 
 button:hover{
-background:#023e8a;
+    background:#023e8a
 }
 
 </style>
@@ -67,18 +65,13 @@ background:#023e8a;
 
 <body>
 
-
 <div class="container">
-
 
 <button onclick="window.location.href='index.html'">
 🏠 Home
 </button>
 
-
-<h2>
-🏥 Hospital Appointment Management
-</h2>
+<h2>🏥 Hospital Appointment Management</h2>
 
 
 <label>Patient Name</label>
@@ -115,143 +108,262 @@ background:#023e8a;
 <option>Stomach Problem</option>
 <option>Hormone Problem</option>
 <option>Blood Problem</option>
-
+<option>Emergency Problem</option>
 
 </select>
 
 
 <label>Department</label>
-
-<input
-type="text"
-id="department"
-readonly
->
+<input type="text" id="department" readonly>
 
 
 <label>Doctor</label>
-
-<input
-type="text"
-id="doctor"
-readonly
->
+<input type="text" id="doctor" readonly>
 
 
 <label>Doctor Available Time</label>
-
-<input
-type="text"
-id="doctorTime"
-readonly
->
+<input type="text" id="doctorTime" readonly>
 
 
 <label>Appointment Time</label>
-
-<input
-type="text"
-id="appointmentTime"
-readonly
->
+<input type="text" id="appointmentTime" readonly>
 
 
 <label>Appointment Date</label>
-
-<input
-type="date"
-id="date"
-readonly
->
+<input type="date" id="date" readonly>
 
 
 <button onclick="bookAppointment()">
 Book Appointment
 </button>
 
-
 </div>
 
 
 
-
 <!-- =====================================================
-     FIREBASE FIRESTORE
+     FIREBASE
 ===================================================== -->
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
+
+
 <script>
+
+/* =====================================================
+   FIREBASE CONFIG
+===================================================== */
+
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+
+    apiKey:
+        "AIzaSyAjjzBZJaLq2B_omm62eHMYYcvaPAB3Gy0",
+
+    authDomain:
+        "hospital-management-syst-e5bef.firebaseapp.com",
+
+    projectId:
+        "hospital-management-syst-e5bef",
+
+    storageBucket:
+        "hospital-management-syst-e5bef.firebasestorage.app",
+
+    messagingSenderId:
+        "774381537399",
+
+    appId:
+        "1:774381537399:web:d6bad35fdf10eca6cf5e72"
+
 };
 
+
+/* Start Firebase */
+
 firebase.initializeApp(firebaseConfig);
+
+
+/* Firestore database */
+
 const db = firebase.firestore();
-</script>
 
-
-<script>
 
 
 /* =====================================================
    DOCTOR DATA
 ===================================================== */
 
-const doctors=[
+const doctors = [
 
-["Heart Problem","Cardiology","Dr. John Smith","09:00 AM - 05:00 PM"],
+    [
+        "Heart Problem",
+        "Cardiology",
+        "Dr. John Smith",
+        "09:00 AM - 05:00 PM"
+    ],
 
-["Heart Problem","Cardiology","Dr. Emily Brown","01:00 PM - 04:00 PM"],
+    [
+        "Heart Problem",
+        "Cardiology",
+        "Dr. Emily Brown",
+        "01:00 PM - 04:00 PM"
+    ],
 
-["Brain Problem","Neurology","Dr. David Wilson","09:00 AM - 05:00 PM"],
+    [
+        "Brain Problem",
+        "Neurology",
+        "Dr. David Wilson",
+        "09:00 AM - 05:00 PM"
+    ],
 
-["Bone Problem","Orthopedic","Dr. Rahul Kumar","09:00 AM - 12:00 PM"],
+    [
+        "Bone Problem",
+        "Orthopedic",
+        "Dr. Rahul Kumar",
+        "09:00 AM - 12:00 PM"
+    ],
 
-["Skin Problem","Dermatology","Dr. Vivek Reddy","09:00 AM - 12:00 PM"],
+    [
+        "Skin Problem",
+        "Dermatology",
+        "Dr. Vivek Reddy",
+        "09:00 AM - 12:00 PM"
+    ],
 
-["General Problem","General Medicine","Dr. Suresh Babu","08:00 AM - 03:00 PM"],
+    [
+        "General Problem",
+        "General Medicine",
+        "Dr. Suresh Babu",
+        "08:00 AM - 03:00 PM"
+    ],
 
-["Women Problem","Gynecology","Dr. Anjali Sharma","09:00 AM - 01:00 PM"],
+    [
+        "Women Problem",
+        "Gynecology",
+        "Dr. Anjali Sharma",
+        "09:00 AM - 01:00 PM"
+    ],
 
-["Child Problems","Pediatrics","Dr. Priya Rao","11:00 AM - 06:00 PM"],
+    [
+        "Child Problems",
+        "Pediatrics",
+        "Dr. Priya Rao",
+        "11:00 AM - 06:00 PM"
+    ],
 
-["Ear Nose Throat Problem","ENT","Dr. Ramesh Kumar","09:30 AM - 01:30 PM"],
+    [
+        "Ear Nose Throat Problem",
+        "ENT",
+        "Dr. Ramesh Kumar",
+        "09:30 AM - 01:30 PM"
+    ],
 
-["Eye Problem","Ophthalmology","Dr. Kiran Patel","10:00 AM - 05:00 PM"],
+    [
+        "Eye Problem",
+        "Ophthalmology",
+        "Dr. Kiran Patel",
+        "10:00 AM - 05:00 PM"
+    ],
 
-["Mental Health Problem","Psychiatry","Dr. Naveen Reddy","02:00 PM - 07:00 PM"],
+    [
+        "Mental Health Problem",
+        "Psychiatry",
+        "Dr. Naveen Reddy",
+        "02:00 PM - 07:00 PM"
+    ],
 
-["Dental Problem","Dentistry","Dr. Sneha Gupta","09:00 AM - 04:00 PM"],
+    [
+        "Dental Problem",
+        "Dentistry",
+        "Dr. Sneha Gupta",
+        "09:00 AM - 04:00 PM"
+    ],
 
-["Urine Problem","Urology","Dr. Mohan Krishna","08:00 AM - 01:00 PM"],
+    [
+        "Urine Problem",
+        "Urology",
+        "Dr. Mohan Krishna",
+        "08:00 AM - 01:00 PM"
+    ],
 
-["Kidney Problem","Nephrology","Dr. Lakshmi Devi","12:00 PM - 06:00 PM"],
+    [
+        "Kidney Problem",
+        "Nephrology",
+        "Dr. Lakshmi Devi",
+        "12:00 PM - 06:00 PM"
+    ],
 
-["Lung Problem","Pulmonology","Dr. Arjun Varma","09:00 AM - 03:00 PM"],
+    [
+        "Lung Problem",
+        "Pulmonology",
+        "Dr. Arjun Varma",
+        "09:00 AM - 03:00 PM"
+    ],
 
-["Cancer Problem","Oncology","Dr. Keerthi Rao","11:00 AM - 05:00 PM"],
+    [
+        "Cancer Problem",
+        "Oncology",
+        "Dr. Keerthi Rao",
+        "11:00 AM - 05:00 PM"
+    ],
 
-["Scan Problem","Radiology","Dr. Harish Kumar","09:00 AM - 02:00 PM"],
+    [
+        "Scan Problem",
+        "Radiology",
+        "Dr. Harish Kumar",
+        "09:00 AM - 02:00 PM"
+    ],
 
-["Exercise Problem","Physiotherapy","Dr. Swathi Reddy","08:30 AM - 04:30 PM"],
+    [
+        "Exercise Problem",
+        "Physiotherapy",
+        "Dr. Swathi Reddy",
+        "08:30 AM - 04:30 PM"
+    ],
 
-["Stomach Problem","Gastroenterology","Dr. Prakash Singh","10:30 AM - 05:30 PM"],
+    [
+        "Stomach Problem",
+        "Gastroenterology",
+        "Dr. Prakash Singh",
+        "10:30 AM - 05:30 PM"
+    ],
 
-["Hormone Problem","Endocrinology","Dr. Meena Joseph","09:00 AM - 01:00 PM"],
+    [
+        "Hormone Problem",
+        "Endocrinology",
+        "Dr. Meena Joseph",
+        "09:00 AM - 01:00 PM"
+    ],
 
-["Blood Problem","Blood Department","Dr. Arun Kumar","10:00 AM - 04:00 PM"],
+    [
+        "Blood Problem",
+        "Blood Department",
+        "Dr. Arun Kumar",
+        "10:00 AM - 04:00 PM"
+    ],
 
-["Emergency Problem","Emergency","Dr. Rajesh Kumar","12:00 AM - 08:00 AM"],
+    [
+        "Emergency Problem",
+        "Emergency",
+        "Dr. Rajesh Kumar",
+        "12:00 AM - 08:00 AM"
+    ],
 
-["Emergency Problem","Emergency","Dr. Priyanka Reddy","08:00 AM - 04:00 PM"],
+    [
+        "Emergency Problem",
+        "Emergency",
+        "Dr. Priyanka Reddy",
+        "08:00 AM - 04:00 PM"
+    ],
 
-["Emergency Problem","Emergency","Dr. Karthik Rao","04:00 PM - 12:00 AM"]
+    [
+        "Emergency Problem",
+        "Emergency",
+        "Dr. Karthik Rao",
+        "04:00 PM - 12:00 AM"
+    ]
 
 ];
 
@@ -263,256 +375,506 @@ const doctors=[
 
 function formatDate(date){
 
-return date.getFullYear()
-+
-"-"
-+
-String(date.getMonth()+1).padStart(2,"0")
-+
-"-"
-+
-String(date.getDate()).padStart(2,"0");
+    return (
+        date.getFullYear() +
+        "-" +
+        String(date.getMonth() + 1).padStart(2,"0") +
+        "-" +
+        String(date.getDate()).padStart(2,"0")
+    );
 
 }
 
 
 function getToday(){
 
-return formatDate(new Date());
+    return formatDate(new Date());
 
 }
 
 
-/* Set today's date initially */
-
-document.getElementById("date").value=getToday();
-
-
 
 /* =====================================================
-   TIME → MINUTES
+   TIME FUNCTIONS
 ===================================================== */
 
 function convertTime(time){
 
-let parts=time.trim().split(" ");
+    const parts =
+        time.trim().split(" ");
 
-let hm=parts[0].split(":");
+    const hm =
+        parts[0].split(":");
 
-let h=parseInt(hm[0]);
+    let hour =
+        parseInt(hm[0],10);
 
-let m=parseInt(hm[1]);
+    const minute =
+        parseInt(hm[1],10);
 
-if(parts[1]==="PM" && h!==12){
-h+=12;
+
+    if(parts[1] === "PM" && hour !== 12){
+
+        hour += 12;
+
+    }
+
+
+    if(parts[1] === "AM" && hour === 12){
+
+        hour = 0;
+
+    }
+
+
+    return hour * 60 + minute;
+
 }
 
-if(parts[1]==="AM" && h===12){
-h=0;
-}
 
-return h*60+m;
-
-}
-
-
-
-/* =====================================================
-   MINUTES → TIME
-===================================================== */
 
 function minutesToTime(minutes){
 
-let h=Math.floor(minutes/60);
+    /*
+       1440 = midnight
+    */
 
-let m=minutes%60;
+    if(minutes === 1440){
 
-let ampm=h>=12 ? "PM" : "AM";
+        minutes = 0;
 
-let displayHour=h%12;
+    }
 
-if(displayHour===0){
-displayHour=12;
-}
 
-return String(displayHour).padStart(2,"0")
-+
-":"
-+
-String(m).padStart(2,"0")
-+
-" "
-+
-ampm;
+    let hour =
+        Math.floor(minutes / 60);
+
+    const minute =
+        minutes % 60;
+
+
+    const ampm =
+        hour >= 12 ? "PM" : "AM";
+
+
+    let displayHour =
+        hour % 12;
+
+
+    if(displayHour === 0){
+
+        displayHour = 12;
+
+    }
+
+
+    return (
+        String(displayHour).padStart(2,"0") +
+        ":" +
+        String(minute).padStart(2,"0") +
+        " " +
+        ampm
+    );
 
 }
 
 
 
 /* =====================================================
-   GET APPOINTMENTS
+   ROUND TIME TO NEXT 30 MINUTES
+===================================================== */
+
+function next30MinuteSlot(minutes){
+
+    return Math.ceil(minutes / 30) * 30;
+
+}
+
+
+
+/* =====================================================
+   GET ALL APPOINTMENTS FROM FIRESTORE
 ===================================================== */
 
 async function getAppointments(){
 
-try{
+    try{
 
-const snapshot =
-await db.collection("appointments").get();
+        const snapshot =
+            await db
+            .collection("appointments")
+            .get();
 
-let appointments=[];
 
-snapshot.forEach(function(doc){
+        const appointments = [];
 
-appointments.push({
 
-id:doc.id,
+        snapshot.forEach(doc => {
 
-...doc.data()
+            const data =
+                doc.data();
 
-});
 
-});
+            appointments.push({
 
-return appointments;
+                id: doc.id,
 
-}
-catch(error){
+                doctor:
+                    data.doctor ||
+                    data["Doctor"] ||
+                    data.doctorName ||
+                    "",
 
-console.error("Error getting appointments:",error);
+                date:
+                    data.date ||
+                    data.appointmentDate ||
+                    data["Appointment Date"] ||
+                    "",
 
-return [];
+                appointmentTime:
+                    data.appointmentTime ||
+                    data.time ||
+                    data["Appointment Time"] ||
+                    "",
 
-}
+                status:
+                    data.status ||
+                    "Booked"
+
+            });
+
+        });
+
+
+        console.log(
+            "Firestore appointments:",
+            appointments
+        );
+
+
+        return appointments;
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Firestore READ ERROR:",
+            error
+        );
+
+        throw error;
+
+    }
 
 }
 
 
 
 /* =====================================================
-   FIND NEXT FREE SLOT FOR A PARTICULAR DATE
+   CHECK WHETHER SLOT IS BOOKED
 ===================================================== */
-async function getFreeSlotForDate(
+
+function isSlotBooked(
     doctorName,
-    doctorAvailableTime,
-    date
+    date,
+    slot,
+    appointments
 ){
 
-    let times = doctorAvailableTime.split(" - ");
+    return appointments.some(appointment => {
 
-    let start = convertTime(times[0]);
-    let end = convertTime(times[1]);
+        const sameDoctor =
+            String(
+                appointment.doctor || ""
+            ).trim().toLowerCase()
+            ===
+            String(
+                doctorName || ""
+            ).trim().toLowerCase();
 
-    // 12:00 AM means midnight / end of the day
+
+        const sameDate =
+            String(
+                appointment.date || ""
+            ).trim()
+            ===
+            String(date).trim();
+
+
+        const sameTime =
+            String(
+                appointment.appointmentTime || ""
+            ).trim()
+            ===
+            String(slot).trim();
+
+
+        const status =
+            String(
+                appointment.status || "Booked"
+            )
+            .trim()
+            .toLowerCase();
+
+
+        /*
+           Cancelled appointments should free the slot.
+        */
+
+        const cancelled =
+            status.includes("cancel");
+
+
+        if(
+            sameDoctor &&
+            sameDate &&
+            sameTime &&
+            !cancelled
+        ){
+
+            return true;
+
+        }
+
+
+        return false;
+
+    });
+
+}
+
+
+
+/* =====================================================
+   FIND FREE SLOT FOR ONE DATE
+===================================================== */
+
+function getFreeSlotForDate(
+    doctorName,
+    doctorAvailableTime,
+    date,
+    appointments
+){
+
+    const times =
+        doctorAvailableTime.split(" - ");
+
+
+    let start =
+        convertTime(times[0]);
+
+
+    let end =
+        convertTime(times[1]);
+
+
+    /*
+       12:00 AM means midnight/end of day.
+    */
+
     if(end === 0){
+
         end = 1440;
+
     }
 
-    let appointments = getAppointments();
 
-    let today = getToday();
+    /*
+       If this is TODAY,
+       skip past appointment times.
+    */
 
-    // If appointment is today,
-    // don't show slots that already passed
-    if(date === today){
+    if(date === getToday()){
 
-        let now = new Date();
+        const now =
+            new Date();
 
-        let currentMinutes =
+
+        const currentMinutes =
             now.getHours() * 60 +
             now.getMinutes();
 
-        if(currentMinutes > start){
 
-            start =
-                Math.ceil(currentMinutes / 30) * 30;
-        }
+        start =
+            Math.max(
+                start,
+                next30MinuteSlot(
+                    currentMinutes
+                )
+            );
+
     }
 
-    // Check every 30 minutes
+
+    /*
+       Doctor's working time already finished.
+       Return null.
+
+       findNextAvailableSlot()
+       will automatically check tomorrow.
+    */
+
+    if(start >= end){
+
+        return null;
+
+    }
+
+
+    /*
+       Check every 30-minute slot.
+    */
+
     for(
         let time = start;
         time < end;
         time += 30
     ){
 
-        let slot = minutesToTime(time);
+        const slot =
+            minutesToTime(time);
 
-        let booked = appointments.some(function(a){
 
-            return(
-                a.doctor === doctorName &&
-                a.date === date &&
-                a.appointmentTime === slot &&
-                a.status === "Booked"
+        const booked =
+            isSlotBooked(
+                doctorName,
+                date,
+                slot,
+                appointments
             );
 
-        });
 
         if(!booked){
 
             return slot;
+
         }
+
     }
 
+
+    /*
+       All slots on this date are booked.
+    */
+
     return null;
+
 }
-
-
 
 
 
 /* =====================================================
-   FIND NEXT AVAILABLE DATE + TIME
+   FIND NEXT AVAILABLE SLOT
 ===================================================== */
 
 async function findNextAvailableSlot(
-doctorName,
-doctorAvailableTime
+    doctorName,
+    doctorAvailableTime
 ){
 
-let startDate=new Date();
+    /*
+       Read Firestore ONCE.
+    */
+
+    const appointments =
+        await getAppointments();
 
 
-/*
-   Search maximum 365 days.
-*/
+    /*
+       Start from TODAY.
+    */
 
-for(let i=0;i<365;i++){
-
-let checkDate=new Date(startDate);
-
-checkDate.setDate(
-startDate.getDate()+i
-);
+    const startDate =
+        new Date();
 
 
-let date=formatDate(checkDate);
+    /*
+       Search for 365 days.
+    */
+
+    for(
+        let day = 0;
+        day < 365;
+        day++
+    ){
+
+        const checkDate =
+            new Date(startDate);
 
 
-let freeTime=
-await getFreeSlotForDate(
-doctorName,
-doctorAvailableTime,
-date
-);
+        checkDate.setDate(
+            startDate.getDate() + day
+        );
 
 
-if(freeTime){
+        const date =
+            formatDate(checkDate);
 
-return{
 
-date:date,
-time:freeTime
+        const freeTime =
+            getFreeSlotForDate(
 
-};
+                doctorName,
+
+                doctorAvailableTime,
+
+                date,
+
+                appointments
+
+            );
+
+
+        /*
+           Slot found.
+        */
+
+        if(freeTime){
+
+            console.log(
+                "NEXT AVAILABLE SLOT:",
+                doctorName,
+                date,
+                freeTime
+            );
+
+
+            return {
+
+                date: date,
+
+                time: freeTime
+
+            };
+
+        }
+
+    }
+
+
+    /*
+       No slot for 365 days.
+    */
+
+    return null;
 
 }
 
-}
 
 
-return null;
+/* =====================================================
+   SHOW FINDING MESSAGE
+===================================================== */
+
+function showFinding(){
+
+    document
+    .getElementById(
+        "appointmentTime"
+    )
+    .value =
+        "Finding slot...";
 
 }
 
@@ -524,105 +886,299 @@ return null;
 
 async function findDoctor(){
 
-let disease=
-document.getElementById("disease").value;
+    const disease =
+        document
+        .getElementById("disease")
+        .value;
 
 
-let department=
-document.getElementById("department");
-
-let doctor=
-document.getElementById("doctor");
-
-let doctorTime=
-document.getElementById("doctorTime");
-
-let appointmentTime=
-document.getElementById("appointmentTime");
-
-let date=
-document.getElementById("date");
+    const department =
+        document
+        .getElementById("department");
 
 
-/*
-   Clear old values
-*/
-
-department.value="";
-
-doctor.value="";
-
-doctorTime.value="";
-
-appointmentTime.value="";
-
-date.value=getToday();
+    const doctor =
+        document
+        .getElementById("doctor");
 
 
-if(!disease){
-
-return;
-
-}
+    const doctorTime =
+        document
+        .getElementById("doctorTime");
 
 
+    const appointmentTime =
+        document
+        .getElementById("appointmentTime");
 
-/* =====================================================
-   EMERGENCY DOCTOR
-===================================================== */
 
-if(disease === "Emergency Problem"){
+    const date =
+        document
+        .getElementById("date");
 
-    let now = new Date();
 
-    let currentMinutes =
-        now.getHours() * 60 +
-        now.getMinutes();
+    /*
+       Clear old values.
+    */
 
-    let result = null;
+    department.value = "";
 
-    if(currentMinutes < 480){
+    doctor.value = "";
 
-        result = doctors.find(
-            d => d[2] === "Dr. Rajesh Kumar"
-        );
+    doctorTime.value = "";
 
-    }
-    else if(currentMinutes < 960){
+    appointmentTime.value = "";
 
-        result = doctors.find(
-            d => d[2] === "Dr. Priyanka Reddy"
-        );
+    date.value = getToday();
 
-    }
-    else{
 
-        result = doctors.find(
-            d => d[2] === "Dr. Karthik Rao"
-        );
+    if(!disease){
+
+        return;
 
     }
 
-    if(result){
 
-        department.value = result[1];
+    try{
 
-        doctor.value = result[2];
+        showFinding();
 
-        doctorTime.value = result[3];
 
-        let slot = findNextAvailableSlot(
-            result[2],
-            result[3]
-        );
+        let result = null;
+
+
+
+        /* =================================================
+           EMERGENCY
+        ================================================= */
+
+        if(
+            disease ===
+            "Emergency Problem"
+        ){
+
+            const now =
+                new Date();
+
+
+            const currentMinutes =
+                now.getHours() * 60 +
+                now.getMinutes();
+
+
+            if(currentMinutes < 480){
+
+                result =
+                    doctors.find(
+                        d =>
+                        d[2] ===
+                        "Dr. Rajesh Kumar"
+                    );
+
+            }
+
+            else if(
+                currentMinutes < 960
+            ){
+
+                result =
+                    doctors.find(
+                        d =>
+                        d[2] ===
+                        "Dr. Priyanka Reddy"
+                    );
+
+            }
+
+            else{
+
+                result =
+                    doctors.find(
+                        d =>
+                        d[2] ===
+                        "Dr. Karthik Rao"
+                    );
+
+            }
+
+        }
+
+
+
+        /* =================================================
+           NORMAL DISEASE
+        ================================================= */
+
+        else{
+
+            const matchingDoctors =
+                doctors.filter(
+                    d =>
+                    d[0] === disease
+                );
+
+
+            /*
+               Only one doctor.
+            */
+
+            if(
+                matchingDoctors.length === 1
+            ){
+
+                result =
+                    matchingDoctors[0];
+
+            }
+
+
+            /*
+               Multiple doctors.
+            */
+
+            else if(
+                matchingDoctors.length > 1
+            ){
+
+                const now =
+                    new Date();
+
+
+                const currentMinutes =
+                    now.getHours() * 60 +
+                    now.getMinutes();
+
+
+                /*
+                   First try doctor currently working.
+                */
+
+                result =
+                    matchingDoctors.find(
+                        d => {
+
+                            const times =
+                                d[3]
+                                .split(" - ");
+
+
+                            let start =
+                                convertTime(
+                                    times[0]
+                                );
+
+
+                            let end =
+                                convertTime(
+                                    times[1]
+                                );
+
+
+                            if(end === 0){
+
+                                end = 1440;
+
+                            }
+
+
+                            return (
+                                currentMinutes >= start &&
+                                currentMinutes < end
+                            );
+
+                        }
+                    );
+
+
+                /*
+                   If nobody is working,
+                   use first doctor and search
+                   next available date.
+                */
+
+                if(!result){
+
+                    result =
+                        matchingDoctors[0];
+
+                }
+
+            }
+
+        }
+
+
+
+        /*
+           No doctor found.
+        */
+
+        if(!result){
+
+            appointmentTime.value = "";
+
+            date.value = "";
+
+            return;
+
+        }
+
+
+
+        /*
+           Show doctor information.
+        */
+
+        department.value =
+            result[1];
+
+
+        doctor.value =
+            result[2];
+
+
+        doctorTime.value =
+            result[3];
+
+
+
+        /*
+           FIND NEXT FREE SLOT
+
+           TODAY
+             ↓
+           TOMORROW
+             ↓
+           NEXT DAY
+             ↓
+           NEXT DAY
+             ↓
+           ...
+           365 DAYS
+        */
+
+        const slot =
+            await findNextAvailableSlot(
+
+                result[2],
+
+                result[3]
+
+            );
+
+
 
         if(slot){
 
-            date.value = slot.date;
+            date.value =
+                slot.date;
 
-            appointmentTime.value = slot.time;
+
+            appointmentTime.value =
+                slot.time;
 
         }
+
         else{
 
             date.value = "";
@@ -631,99 +1187,32 @@ if(disease === "Emergency Problem"){
                 "No Slots Available";
 
         }
+
     }
 
-    return;
-}
+    catch(error){
+
+        console.error(
+            "SLOT CALCULATION ERROR:",
+            error
+        );
 
 
-/* =====================================================
-   NORMAL DISEASE
-===================================================== */
+        appointmentTime.value = "";
 
-/* =====================================================
-   NORMAL DISEASE
-===================================================== */
+        date.value = "";
 
-let matchingDoctors = doctors.filter(
-    d => d[0] === disease
-);
 
-let result;
+        alert(
 
-if(matchingDoctors.length === 1){
+            "❌ Could not calculate appointment slot.\n\n" +
 
-    result = matchingDoctors[0];
+            "Error: " +
+            error.message
 
-}else{
+        );
 
-    let now = new Date();
-
-    let currentMinutes =
-        now.getHours() * 60 +
-        now.getMinutes();
-
-    result = matchingDoctors.find(d => {
-
-        let times = d[3].split(" - ");
-
-        let start = convertTime(times[0]);
-        let end = convertTime(times[1]);
-
-        return currentMinutes >= start &&
-               currentMinutes < end;
-
-    });
-
-    if(!result){
-        result = matchingDoctors[0];
     }
-}
-
-if(!result){
-    return;
-}
-
-department.value = result[1];
-
-doctor.value = result[2];
-
-doctorTime.value = result[3];
-/*
-   VERY IMPORTANT:
-
-   Existing appointments are checked here.
-
-   If today's doctor time is over,
-   automatically moves to tomorrow.
-
-   If tomorrow is full,
-   automatically moves to next day.
-*/
-
-let slot=
-await findNextAvailableSlot(
-result[2],
-result[3]
-);
-
-
-if(slot){
-
-date.value=slot.date;
-
-appointmentTime.value=slot.time;
-
-}
-
-else{
-
-date.value="";
-
-appointmentTime.value=
-"No Slots Available";
-
-}
 
 }
 
@@ -735,171 +1224,265 @@ appointmentTime.value=
 
 async function bookAppointment(){
 
+    const appointment = {
 
-let appointment={
-
-name:
-document.getElementById("name").value.trim(),
-
-phone:
-document.getElementById("phone").value.trim(),
-
-disease:
-document.getElementById("disease").value,
-
-department:
-document.getElementById("department").value,
-
-doctor:
-document.getElementById("doctor").value,
-
-doctorTime:
-document.getElementById("doctorTime").value,
-
-appointmentTime:
-document.getElementById("appointmentTime").value,
-
-date:
-document.getElementById("date").value,
-
-status:"Booked"
-
-};
+        name:
+            document
+            .getElementById("name")
+            .value
+            .trim(),
 
 
+        phone:
+            document
+            .getElementById("phone")
+            .value
+            .trim(),
 
-/* =====================================================
-   VALIDATION
-===================================================== */
 
-if(
-!appointment.name ||
-!appointment.phone ||
-!appointment.disease
-){
+        disease:
+            document
+            .getElementById("disease")
+            .value,
 
-alert("Please enter patient details");
 
-return;
+        department:
+            document
+            .getElementById("department")
+            .value,
+
+
+        doctor:
+            document
+            .getElementById("doctor")
+            .value,
+
+
+        doctorTime:
+            document
+            .getElementById("doctorTime")
+            .value,
+
+
+        appointmentTime:
+            document
+            .getElementById(
+                "appointmentTime"
+            )
+            .value,
+
+
+        date:
+            document
+            .getElementById("date")
+            .value,
+
+
+        status:
+            "Booked"
+
+    };
+
+
+
+    /* =================================================
+       PATIENT DETAILS VALIDATION
+    ================================================= */
+
+    if(
+        !appointment.name ||
+        !appointment.phone ||
+        !appointment.disease
+    ){
+
+        alert(
+            "Please enter patient details"
+        );
+
+        return;
+
+    }
+
+
+
+    /* =================================================
+       SLOT VALIDATION
+    ================================================= */
+
+    if(
+
+        !appointment.doctor ||
+
+        !appointment.appointmentTime ||
+
+        appointment.appointmentTime ===
+        "Finding slot..." ||
+
+        appointment.appointmentTime ===
+        "No Slots Available" ||
+
+        !appointment.date
+
+    ){
+
+        alert(
+            "No appointment slot available"
+        );
+
+        return;
+
+    }
+
+
+
+    try{
+
+        /*
+           Read latest Firestore data
+           before saving.
+        */
+
+        const appointments =
+            await getAppointments();
+
+
+
+        /*
+           Check whether selected slot
+           was booked by somebody else.
+        */
+
+        const alreadyBooked =
+            isSlotBooked(
+
+                appointment.doctor,
+
+                appointment.date,
+
+                appointment.appointmentTime,
+
+                appointments
+
+            );
+
+
+
+        if(alreadyBooked){
+
+            alert(
+
+                "This slot was just booked.\n\n" +
+
+                "Finding the next available slot."
+
+            );
+
+
+            await findDoctor();
+
+            return;
+
+        }
+
+
+
+        /* =================================================
+           SAVE APPOINTMENT TO FIRESTORE
+        ================================================= */
+
+        const docRef =
+            await db
+            .collection("appointments")
+            .add(appointment);
+
+
+
+        console.log(
+            "Appointment saved:",
+            docRef.id
+        );
+
+
+
+        /* =================================================
+           SUCCESS MESSAGE
+        ================================================= */
+
+        alert(
+
+            "✅ Appointment Booked Successfully\n\n" +
+
+            "Patient: " +
+            appointment.name +
+
+            "\nDoctor: " +
+            appointment.doctor +
+
+            "\nAppointment Time: " +
+            appointment.appointmentTime +
+
+            "\nAppointment Date: " +
+            appointment.date
+
+        );
+
+
+
+        /*
+           Clear patient details.
+        */
+
+        document
+        .getElementById("name")
+        .value = "";
+
+
+        document
+        .getElementById("phone")
+        .value = "";
+
+
+
+        /*
+           Automatically find next slot.
+        */
+
+        await findDoctor();
+
+    }
+
+    catch(error){
+
+        console.error(
+            "FIRESTORE SAVE ERROR:",
+            error
+        );
+
+
+        alert(
+
+            "❌ Appointment save failed.\n\n" +
+
+            error.message
+
+        );
+
+    }
 
 }
 
 
-if(
-!appointment.doctor ||
-!appointment.appointmentTime ||
-appointment.appointmentTime==="No Slots Available" ||
-!appointment.date
-){
-
-alert("No appointment slot available");
-
-return;
-
-}
-
-
 
 /* =====================================================
-   GET OLD APPOINTMENTS
+   INITIAL DATE
 ===================================================== */
 
-let appointments=await getAppointments();
-
-
-
-/* =====================================================
-   FINAL SLOT CHECK
-===================================================== */
-
-let alreadyBooked=
-appointments.some(function(a){
-
-return(
-
-a.doctor===appointment.doctor &&
-
-a.date===appointment.date &&
-
-a.appointmentTime===
-appointment.appointmentTime &&
-
-a.status==="Booked"
-
-);
-
-});
-
-
-/*
-   If somebody booked the same slot,
-   calculate again automatically.
-*/
-
-if(alreadyBooked){
-
-alert(
-"This slot was just booked. Finding next available slot."
-);
-
-await findDoctor();
-
-return;
-
-}
-
-
-
-/* =====================================================
-   SAVE NEW APPOINTMENT
-===================================================== */
-
-await db
-.collection("appointments")
-.add(appointment);
-
-
-
-/* =====================================================
-   SUCCESS
-===================================================== */
-
-alert(
-"✅ Appointment Booked Successfully\n\n"+
-"Patient: "+appointment.name+
-"\nDoctor: "+appointment.doctor+
-"\nAppointment Time: "+appointment.appointmentTime+
-"\nAppointment Date: "+appointment.date
-);
-
-
-
-/*
-   Clear patient information
-*/
-
-document.getElementById("name").value="";
-
-document.getElementById("phone").value="";
-
-
-
-/*
-   IMPORTANT:
-
-   Recalculate after booking.
-
-   So next patient automatically gets
-   the next free slot.
-*/
-
-await findDoctor();
-
-}
+document
+.getElementById("date")
+.value =
+    getToday();
 
 </script>
 
-
 </body>
-
 </html>
