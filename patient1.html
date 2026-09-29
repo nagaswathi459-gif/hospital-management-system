@@ -4,208 +4,112 @@
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Patient Management</title>
 
 <style>
 
-*{
-    box-sizing:border-box;
-    font-family:Arial,sans-serif;
-}
-
 body{
-    margin:0;
+    font-family:Arial,sans-serif;
     background:#f4f7fc;
-    padding:10px;
+    margin:0;
+    padding:20px;
 }
 
 .container{
-    width:96%;
+    width:95%;
+    max-width:1400px;
     margin:auto;
     background:white;
-    border-radius:15px;
     padding:25px;
-    box-shadow:0 5px 18px rgba(0,0,0,0.15);
-    overflow-x:auto;
+    border-radius:10px;
+    box-shadow:0 0 10px gray;
+    box-sizing:border-box;
 }
 
-/* TOP AREA */
-
-.top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+h2{
+    text-align:center;
+    color:#0d6efd;
     margin-bottom:25px;
 }
 
-.home-btn{
+button{
+    padding:10px 15px;
     background:#0077b6;
     color:white;
     border:none;
-    padding:14px 22px;
-    border-radius:6px;
-    font-size:16px;
-    font-weight:bold;
+    border-radius:5px;
     cursor:pointer;
+    margin:5px;
 }
 
-.home-btn:hover{
-    background:#005f8f;
+button:hover{
+    background:#023e8a;
 }
 
 .search-box{
-    width:375px;
-    padding:13px 16px;
+    width:100%;
+    padding:10px;
+    margin:10px 0 20px;
+    box-sizing:border-box;
     border:1px solid #ccc;
-    border-radius:6px;
-    font-size:16px;
-    outline:none;
+    border-radius:5px;
 }
-
-.search-box:focus{
-    border-color:#1976d2;
-}
-
-/* TITLE */
-
-.title{
-    text-align:center;
-    color:#1261d6;
-    font-size:32px;
-    margin:5px 0 25px;
-}
-
-/* NOTICE */
-
-.notice{
-    background:#fff2c9;
-    border-left:6px solid #ffb800;
-    padding:17px 20px;
-    border-radius:6px;
-    color:#8a6100;
-    font-size:18px;
-    font-weight:bold;
-    margin-bottom:18px;
-}
-
-/* TOTAL */
 
 .total{
-    color:#1261d6;
-    font-size:24px;
+    font-size:18px;
     font-weight:bold;
-    margin-bottom:18px;
+    margin:15px 0;
+    color:#333;
 }
 
-/* TABLE */
+.notice{
+    background:#eaf4ff;
+    padding:12px;
+    border-radius:5px;
+    margin-bottom:15px;
+    color:#333;
+}
+
+.table-container{
+    overflow-x:auto;
+}
 
 table{
     width:100%;
     border-collapse:collapse;
-    background:white;
-    min-width:1250px;
+    min-width:1100px;
 }
 
 th{
-    background:#1261e8;
+    background:#0077b6;
     color:white;
-    padding:15px 10px;
-    font-size:18px;
-    white-space:nowrap;
+    padding:10px;
+    border:1px solid #ddd;
 }
 
 td{
-    border:1px solid #d8d8d8;
-    padding:13px 10px;
+    padding:10px;
+    border:1px solid #ddd;
     text-align:center;
-    font-size:18px;
-    vertical-align:middle;
 }
 
-tr:hover{
-    background:#f8fbff;
-}
-
-/* STATUS */
-
-.completed{
-    color:#777;
-    font-weight:bold;
-}
-
-.pending{
-    color:#e68a00;
-    font-weight:bold;
-}
-
-.cancelled{
-    color:#d00000;
-    font-weight:bold;
-}
-
-.available{
-    color:#008000;
-    font-weight:bold;
-}
-
-/* ACTION */
-
-.view-only{
-    color:#222;
-    font-size:17px;
-    font-weight:normal;
+tr:nth-child(even){
+    background:#f8f9fa;
 }
 
 .delete-btn{
     background:#dc3545;
-    color:white;
-    border:none;
-    padding:8px 12px;
-    border-radius:5px;
-    cursor:pointer;
-    font-weight:bold;
 }
 
 .delete-btn:hover{
     background:#b02a37;
 }
 
-.no-data{
-    text-align:center;
-    color:#777;
-    padding:25px;
-    font-size:18px;
-}
-
-/* MOBILE */
-
-@media(max-width:800px){
-
-    .container{
-        width:100%;
-        padding:15px;
-    }
-
-    .top{
-        flex-direction:column;
-        gap:15px;
-        align-items:stretch;
-    }
-
-    .search-box{
-        width:100%;
-    }
-
-    .title{
-        font-size:26px;
-    }
-
-    .notice{
-        font-size:15px;
-    }
-
+.status{
+    font-weight:bold;
 }
 
 </style>
@@ -219,56 +123,37 @@ tr:hover{
 <div class="container">
 
 
-<!-- TOP -->
-
-<div class="top">
-
-<button class="home-btn"
-onclick="window.location.href='index.html'">
-
+<button onclick="window.location.href='index.html'">
 🏠 Home
-
 </button>
 
 
-<input
-type="text"
-id="searchPatient"
-class="search-box"
-placeholder="🔍 Search Patient Name"
-onkeyup="searchPatient()">
-
-</div>
-
-
-<!-- TITLE -->
-
-<h1 class="title">
-
+<h2>
 👨‍⚕️ Patient Management
+</h2>
 
-</h1>
-
-
-<!-- NOTICE -->
 
 <div class="notice">
-
-👀 &nbsp; View Only - Only Admin can delete patients.
-
+View Only - Only Admin can delete patients.
 </div>
 
 
-<!-- TOTAL -->
+<input
+    type="text"
+    id="searchInput"
+    class="search-box"
+    placeholder="Search Patient Name"
+    oninput="searchPatient()"
+>
+
 
 <div class="total">
-
-Total Patients : <span id="totalPatients">0</span>
-
+Total Patients: <span id="totalPatients">0</span>
 </div>
 
 
-<!-- TABLE -->
+<div class="table-container">
+
 
 <table>
 
@@ -303,7 +188,7 @@ Total Patients : <span id="totalPatients">0</span>
 </thead>
 
 
-<tbody id="patientTable">
+<tbody id="patientTableBody">
 
 </tbody>
 
@@ -314,487 +199,61 @@ Total Patients : <span id="totalPatients">0</span>
 </div>
 
 
+</div>
+
+
+<!-- =====================================================
+     FIREBASE FIRESTORE
+===================================================== -->
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+
 <script>
 
-/* =========================================
-   ADMIN CHECK
-========================================= */
 
-function isAdmin(){
+/* =====================================================
+   FIREBASE CONFIG
 
-    let currentUser =
-        JSON.parse(sessionStorage.getItem("currentUser"));
+   IMPORTANT:
+   Put the SAME Firebase config that you use
+   in your Appointment page.
+===================================================== */
 
-    if(!currentUser){
-        return false;
-    }
+const firebaseConfig = {
+    apiKey: "AIzaSyAjjzBZJaLq2B_omm62eHMYYcvaPAB3Gy0",
+    authDomain: "hospital-management-syst-e5bef.firebaseapp.com",
+    projectId: "hospital-management-syst-e5bef",
+    storageBucket: "hospital-management-syst-e5bef.firebasestorage.app",
+    messagingSenderId: "774381537399",
+    appId: "1:774381537399:web:d6bad35fdf10eca6cf5e72"
+};
 
-    return (
-        currentUser.role &&
-        currentUser.role.toLowerCase() === "admin"
-    );
-}
 
+/* Initialize Firebase */
 
-/* =========================================
-   GET PATIENT DATA
-========================================= */
+firebase.initializeApp(firebaseConfig);
 
-function getPatients(){
 
-    let patients = [];
+/* Firestore */
 
-    /*
-       Main appointment storage
-    */
+const db = firebase.firestore();
 
-    let appointments =
-        JSON.parse(localStorage.getItem("appointments")) || [];
 
-    appointments.forEach((item,index)=>{
 
-        patients.push({
+/* =====================================================
+   GLOBAL PATIENT DATA
+===================================================== */
 
-            id:index,
+let allPatients = [];
 
-            name:
-                item.patientName ||
-                item.name ||
-                item.patient ||
-                "Unknown",
 
-            phone:
-                item.phone ||
-                item.patientPhone ||
-                item.mobile ||
-                "N/A",
 
-            disease:
-                item.disease ||
-                item.problem ||
-                item.healthIssue ||
-                "N/A",
-
-            department:
-                item.department ||
-                item.specialization ||
-                "N/A",
-
-            doctor:
-                item.doctor ||
-                item.doctorName ||
-                "Not Assigned",
-
-            doctorTime:
-                item.doctorTime ||
-                item.availableTime ||
-                (
-                    item.start && item.end
-                    ?
-                    item.start + " - " + item.end
-                    :
-                    "N/A"
-                ),
-
-            appointmentTime:
-                item.appointmentTime ||
-                item.time ||
-                "N/A",
-
-            date:
-                item.date ||
-                item.appointmentDate ||
-                "N/A",
-
-            status:
-                item.status ||
-                "Pending"
-
-        });
-
-    });
-
-
-    /*
-       If separate patient storage exists,
-       also read it when appointments are empty.
-    */
-
-    if(
-        patients.length === 0
-    ){
-
-        let savedPatients =
-            JSON.parse(localStorage.getItem("patients")) || [];
-
-        savedPatients.forEach((item,index)=>{
-
-            patients.push({
-
-                id:index,
-
-                name:
-                    item.patientName ||
-                    item.name ||
-                    "Unknown",
-
-                phone:
-                    item.phone ||
-                    item.patientPhone ||
-                    "N/A",
-
-                disease:
-                    item.disease ||
-                    "N/A",
-
-                department:
-                    item.department ||
-                    "N/A",
-
-                doctor:
-                    item.doctor ||
-                    item.doctorName ||
-                    "Not Assigned",
-
-                doctorTime:
-                    item.doctorTime ||
-                    item.availableTime ||
-                    "N/A",
-
-                appointmentTime:
-                    item.appointmentTime ||
-                    item.time ||
-                    "N/A",
-
-                date:
-                    item.date ||
-                    item.appointmentDate ||
-                    "N/A",
-
-                status:
-                    item.status ||
-                    "Pending"
-
-            });
-
-        });
-
-    }
-
-
-    return patients;
-
-}
-
-
-/* =========================================
-   STATUS FORMAT
-========================================= */
-
-function getStatus(status){
-
-    if(!status){
-        return "Pending";
-    }
-
-    let s =
-        String(status).toLowerCase();
-
-    if(
-        s.includes("complete") ||
-        s.includes("done")
-    ){
-
-        return `
-        <div class="completed">
-        ✅<br>
-        Completed
-        </div>
-        `;
-
-    }
-
-
-    if(
-        s.includes("cancel")
-    ){
-
-        return `
-        <div class="cancelled">
-        ❌<br>
-        Cancelled
-        </div>
-        `;
-
-    }
-
-
-    if(
-        s.includes("available")
-    ){
-
-        return `
-        <div class="available">
-        🟢<br>
-        Available
-        </div>
-        `;
-
-    }
-
-
-    return `
-    <div class="pending">
-    🕒<br>
-    Pending
-    </div>
-    `;
-
-}
-
-
-/* =========================================
-   DISPLAY PATIENTS
-========================================= */
-
-function displayPatients(list){
-
-    let table =
-        document.getElementById("patientTable");
-
-    table.innerHTML = "";
-
-
-    document.getElementById("totalPatients")
-        .innerText = list.length;
-
-
-    if(list.length === 0){
-
-        table.innerHTML = `
-
-        <tr>
-
-        <td colspan="11" class="no-data">
-
-        No patients found.
-
-        </td>
-
-        </tr>
-
-        `;
-
-        return;
-
-    }
-
-
-    list.forEach((patient,index)=>{
-
-        let action = "";
-
-
-        /*
-           ADMIN:
-           Delete button visible
-
-           NORMAL USER:
-           View Only
-        */
-
-        if(isAdmin()){
-
-            action = `
-
-            <button
-            class="delete-btn"
-            onclick="deletePatient(${patient.id})">
-
-            🗑 Delete
-
-            </button>
-
-            `;
-
-        }
-        else{
-
-            action = `
-
-            <div class="view-only">
-
-            View<br>
-            Only
-
-            </div>
-
-            `;
-
-        }
-
-
-        table.innerHTML += `
-
-        <tr>
-
-        <td>${index + 1}</td>
-
-        <td>${escapeHTML(patient.name)}</td>
-
-        <td>${escapeHTML(patient.phone)}</td>
-
-        <td>${escapeHTML(patient.disease)}</td>
-
-        <td>${escapeHTML(patient.department)}</td>
-
-        <td>${escapeHTML(patient.doctor)}</td>
-
-        <td>${escapeHTML(patient.doctorTime)}</td>
-
-        <td>${escapeHTML(patient.appointmentTime)}</td>
-
-        <td>${escapeHTML(patient.date)}</td>
-
-        <td>
-
-        ${getStatus(patient.status)}
-
-        </td>
-
-        <td>
-
-        ${action}
-
-        </td>
-
-        </tr>
-
-        `;
-
-    });
-
-}
-
-
-/* =========================================
-   DELETE PATIENT
-========================================= */
-
-function deletePatient(index){
-
-    /*
-       Security check
-    */
-
-    if(!isAdmin()){
-
-        alert(
-            "Access Denied!\nOnly Admin can delete patients."
-        );
-
-        return;
-
-    }
-
-
-    let appointments =
-        JSON.parse(localStorage.getItem("appointments")) || [];
-
-
-    if(
-        index < 0 ||
-        index >= appointments.length
-    ){
-
-        alert("Patient record not found.");
-
-        return;
-
-    }
-
-
-    let patient =
-        appointments[index];
-
-
-    let patientName =
-        patient.patientName ||
-        patient.name ||
-        "this patient";
-
-
-    let confirmDelete =
-        confirm(
-            "Are you sure you want to delete " +
-            patientName +
-            "?"
-        );
-
-
-    if(!confirmDelete){
-        return;
-    }
-
-
-    appointments.splice(index,1);
-
-
-    localStorage.setItem(
-        "appointments",
-        JSON.stringify(appointments)
-    );
-
-
-    /*
-       Refresh page table
-    */
-
-    displayPatients(
-        getPatients()
-    );
-
-
-    alert("Patient deleted successfully.");
-
-}
-
-
-/* =========================================
-   SEARCH PATIENT
-========================================= */
-
-function searchPatient(){
-
-    let search =
-        document.getElementById("searchPatient")
-        .value
-        .toLowerCase()
-        .trim();
-
-
-    let patients =
-        getPatients();
-
-
-    let filtered =
-        patients.filter(patient =>
-
-            String(patient.name)
-                .toLowerCase()
-                .includes(search)
-
-        );
-
-
-    displayPatients(filtered);
-
-}
-
-
-/* =========================================
-   HTML SECURITY
-========================================= */
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
 
 function escapeHTML(value){
 
@@ -803,57 +262,533 @@ function escapeHTML(value){
     }
 
     return String(value)
+
         .replace(/&/g,"&amp;")
+
         .replace(/</g,"&lt;")
+
         .replace(/>/g,"&gt;")
+
         .replace(/"/g,"&quot;")
+
         .replace(/'/g,"&#039;");
 
 }
 
 
-/* =========================================
-   LOAD PATIENTS
-========================================= */
 
-displayPatients(
-    getPatients()
-);
+/* =====================================================
+   ADMIN CHECK
+===================================================== */
 
+function isAdmin(){
 
-/* =========================================
-   REFRESH EVERY 30 SECONDS
-========================================= */
+    let currentUser =
+        JSON.parse(
+            sessionStorage.getItem("currentUser")
+        );
 
-setInterval(function(){
+    return(
+        currentUser &&
+        currentUser.role &&
+        currentUser.role
+            .toLowerCase() === "admin"
+    );
 
-    let search =
-        document.getElementById("searchPatient").value
-        .toLowerCase()
-        .trim();
-
-
-    let patients =
-        getPatients();
+}
 
 
-    if(search){
 
-        patients =
-            patients.filter(patient =>
+/* =====================================================
+   GET STATUS
+===================================================== */
 
-                String(patient.name)
-                    .toLowerCase()
-                    .includes(search)
+function getStatus(status){
 
-            );
+    if(!status){
+        return "Pending";
+    }
+
+
+    let value =
+        String(status).toLowerCase();
+
+
+    if(
+        value.includes("complete") ||
+        value.includes("done")
+    ){
+
+        return "Completed";
 
     }
 
 
-    displayPatients(patients);
+    if(
+        value.includes("cancel")
+    ){
 
-},30000);
+        return "Cancelled";
+
+    }
+
+
+    if(
+        value.includes("available")
+    ){
+
+        return "Available";
+
+    }
+
+
+    if(
+        value.includes("book")
+    ){
+
+        return "Booked";
+
+    }
+
+
+    return "Pending";
+
+}
+
+
+
+/* =====================================================
+   CONVERT FIRESTORE DOCUMENT
+   INTO PATIENT OBJECT
+===================================================== */
+
+function convertPatient(doc){
+
+    let data = doc.data();
+
+
+    return {
+
+        id: doc.id,
+
+
+        name:
+            data.name ||
+            data.patientName ||
+            data.patient ||
+            data["Patient Name"] ||
+            "Unknown",
+
+
+        phone:
+            data.phone ||
+            data.patientPhone ||
+            data.mobile ||
+            data["Phone Number"] ||
+            "N/A",
+
+
+        disease:
+            data.disease ||
+            data.problem ||
+            data.healthIssue ||
+            data["Disease"] ||
+            "N/A",
+
+
+        department:
+            data.department ||
+            data.specialization ||
+            data["Department"] ||
+            "N/A",
+
+
+        doctor:
+            data.doctor ||
+            data.doctorName ||
+            data["Doctor"] ||
+            "Not Assigned",
+
+
+        doctorTime:
+            data.doctorTime ||
+            data.availableTime ||
+            data["Doctor Time"] ||
+            (
+                data.start && data.end
+                ?
+                data.start + " - " + data.end
+                :
+                "N/A"
+            ),
+
+
+        appointmentTime:
+            data.appointmentTime ||
+            data.time ||
+            data["Appointment Time"] ||
+            "N/A",
+
+
+        date:
+            data.date ||
+            data.appointmentDate ||
+            data["Appointment Date"] ||
+            "N/A",
+
+
+        status:
+            getStatus(
+                data.status
+            )
+
+    };
+
+}
+
+
+
+/* =====================================================
+   FIRESTORE REAL-TIME CONNECTION
+===================================================== */
+
+function loadPatients(){
+
+    db.collection("appointments")
+
+        .onSnapshot(
+
+            function(snapshot){
+
+                allPatients = [];
+
+
+                snapshot.forEach(
+                    function(doc){
+
+                        allPatients.push(
+                            convertPatient(doc)
+                        );
+
+                    }
+                );
+
+
+                displayPatients(
+                    allPatients
+                );
+
+            },
+
+
+            function(error){
+
+                console.error(
+                    "Firestore Error:",
+                    error
+                );
+
+
+                alert(
+                    "❌ Unable to load patients.\n\n" +
+                    error.message
+                );
+
+            }
+
+        );
+
+}
+
+
+
+/* =====================================================
+   DISPLAY PATIENTS
+===================================================== */
+
+function displayPatients(list){
+
+    let tableBody =
+        document.getElementById(
+            "patientTableBody"
+        );
+
+
+    tableBody.innerHTML = "";
+
+
+    document.getElementById(
+        "totalPatients"
+    ).textContent = list.length;
+
+
+
+    if(list.length === 0){
+
+        tableBody.innerHTML = `
+
+            <tr>
+
+                <td colspan="11">
+
+                    No Patients Found
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+
+    list.forEach(
+        function(patient,index){
+
+            let row =
+                document.createElement("tr");
+
+
+            row.innerHTML = `
+
+                <td>
+                    ${index + 1}
+                </td>
+
+
+                <td>
+                    ${escapeHTML(patient.name)}
+                </td>
+
+
+                <td>
+                    ${escapeHTML(patient.phone)}
+                </td>
+
+
+                <td>
+                    ${escapeHTML(patient.disease)}
+                </td>
+
+
+                <td>
+                    ${escapeHTML(patient.department)}
+                </td>
+
+
+                <td>
+                    ${escapeHTML(patient.doctor)}
+                </td>
+
+
+                <td>
+                    ${escapeHTML(patient.doctorTime)}
+                </td>
+
+
+                <td>
+                    ${escapeHTML(patient.appointmentTime)}
+                </td>
+
+
+                <td>
+                    ${escapeHTML(patient.date)}
+                </td>
+
+
+                <td class="status">
+                    ${escapeHTML(patient.status)}
+                </td>
+
+
+                <td>
+
+                    <button
+                        class="delete-btn"
+                        onclick='deletePatient(${JSON.stringify(patient.id)})'
+                    >
+                        Delete
+                    </button>
+
+                </td>
+
+            `;
+
+
+            tableBody.appendChild(row);
+
+        }
+    );
+
+}
+
+
+
+/* =====================================================
+   SEARCH PATIENT NAME
+===================================================== */
+
+function searchPatient(){
+
+    let searchValue =
+        document.getElementById(
+            "searchInput"
+        )
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    let filteredPatients =
+        allPatients.filter(
+            function(patient){
+
+                return String(
+                    patient.name
+                )
+                .toLowerCase()
+                .includes(searchValue);
+
+            }
+        );
+
+
+    displayPatients(
+        filteredPatients
+    );
+
+}
+
+
+
+/* =====================================================
+   DELETE PATIENT
+   FIRESTORE DOCUMENT DELETE
+===================================================== */
+
+async function deletePatient(patientId){
+
+
+    /* Admin check */
+
+    if(!isAdmin()){
+
+        alert(
+            "❌ Only Admin can delete patients."
+        );
+
+        return;
+
+    }
+
+
+
+    /* Find patient */
+
+    let patient =
+        allPatients.find(
+            function(item){
+
+                return item.id === patientId;
+
+            }
+        );
+
+
+    if(!patient){
+
+        alert(
+            "❌ Patient not found."
+        );
+
+        return;
+
+    }
+
+
+
+    /* Confirmation */
+
+    let confirmDelete =
+        confirm(
+
+            "Are you sure you want to delete this patient?\n\n" +
+
+            "Patient: " +
+            patient.name
+
+        );
+
+
+    if(!confirmDelete){
+
+        return;
+
+    }
+
+
+
+    try{
+
+
+        /* Delete Firestore document */
+
+        await db
+
+            .collection("appointments")
+
+            .doc(patientId)
+
+            .delete();
+
+
+
+        alert(
+            "✅ Patient deleted successfully."
+        );
+
+
+        /*
+           No need to manually refresh.
+
+           Firestore onSnapshot()
+           automatically updates the table.
+        */
+
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Delete Error:",
+            error
+        );
+
+
+        alert(
+
+            "❌ Patient delete failed.\n\n" +
+
+            error.message
+
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   START PAGE
+===================================================== */
+
+loadPatients();
+
 
 </script>
 
